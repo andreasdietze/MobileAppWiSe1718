@@ -17,8 +17,9 @@
 		1EB76F0C2028D5580051DFE6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1EB76F0A2028D5580051DFE6 /* LaunchScreen.storyboard */; };
 		1EB76F172028D5580051DFE6 /* MobileAppsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB76F162028D5580051DFE6 /* MobileAppsTests.swift */; };
 		1EB76F222028D5580051DFE6 /* MobileAppsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB76F212028D5580051DFE6 /* MobileAppsUITests.swift */; };
-		311DC4D3203F713A005E350A /* LaserShot.wav in Resources */ = {isa = PBXBuildFile; fileRef = 311DC4D1203F713A005E350A /* LaserShot.wav */; };
-		311DC4D4203F713A005E350A /* Steamtech-Mayhem.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 311DC4D2203F713A005E350A /* Steamtech-Mayhem.mp3 */; };
+		3145B8BD20404982005D99EA /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3145B8BC20404982005D99EA /* AudioManager.swift */; };
+		3145B8C120404BEA005D99EA /* LaserShot.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3145B8BF20404BEA005D99EA /* LaserShot.wav */; };
+		3145B8C220404BEA005D99EA /* Steamtech-Mayhem.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3145B8C020404BEA005D99EA /* Steamtech-Mayhem.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,8 +56,9 @@
 		1EB76F1D2028D5580051DFE6 /* MobileAppsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobileAppsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1EB76F212028D5580051DFE6 /* MobileAppsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileAppsUITests.swift; sourceTree = "<group>"; };
 		1EB76F232028D5580051DFE6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		311DC4D1203F713A005E350A /* LaserShot.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = LaserShot.wav; path = ../../../../../../LaserShot.wav; sourceTree = "<group>"; };
-		311DC4D2203F713A005E350A /* Steamtech-Mayhem.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = "Steamtech-Mayhem.mp3"; path = "../../../../../../Steamtech-Mayhem.mp3"; sourceTree = "<group>"; };
+		3145B8BC20404982005D99EA /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
+		3145B8BF20404BEA005D99EA /* LaserShot.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = LaserShot.wav; sourceTree = "<group>"; };
+		3145B8C020404BEA005D99EA /* Steamtech-Mayhem.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "Steamtech-Mayhem.mp3"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,7 +109,7 @@
 		1EB76EFA2028D5580051DFE6 /* MobileApps */ = {
 			isa = PBXGroup;
 			children = (
-				311DC4C0203F6768005E350A /* Audio */,
+				3145B8BE20404B93005D99EA /* Sound */,
 				1EB76EFB2028D5580051DFE6 /* AppDelegate.swift */,
 				1EB76EFD2028D5580051DFE6 /* GameScene.sks */,
 				1EB76EFF2028D5580051DFE6 /* Actions.sks */,
@@ -117,6 +119,7 @@
 				1EB76F082028D5580051DFE6 /* Assets.xcassets */,
 				1EB76F0A2028D5580051DFE6 /* LaunchScreen.storyboard */,
 				1EB76F0D2028D5580051DFE6 /* Info.plist */,
+				3145B8BC20404982005D99EA /* AudioManager.swift */,
 			);
 			path = MobileApps;
 			sourceTree = "<group>";
@@ -139,13 +142,13 @@
 			path = MobileAppsUITests;
 			sourceTree = "<group>";
 		};
-		311DC4C0203F6768005E350A /* Audio */ = {
+		3145B8BE20404B93005D99EA /* Sound */ = {
 			isa = PBXGroup;
 			children = (
-				311DC4D1203F713A005E350A /* LaserShot.wav */,
-				311DC4D2203F713A005E350A /* Steamtech-Mayhem.mp3 */,
+				3145B8BF20404BEA005D99EA /* LaserShot.wav */,
+				3145B8C020404BEA005D99EA /* Steamtech-Mayhem.mp3 */,
 			);
-			path = Audio;
+			path = Sound;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -255,10 +258,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				311DC4D3203F713A005E350A /* LaserShot.wav in Resources */,
+				3145B8C120404BEA005D99EA /* LaserShot.wav in Resources */,
 				1EB76F072028D5580051DFE6 /* Main.storyboard in Resources */,
 				1EB76EFE2028D5580051DFE6 /* GameScene.sks in Resources */,
-				311DC4D4203F713A005E350A /* Steamtech-Mayhem.mp3 in Resources */,
+				3145B8C220404BEA005D99EA /* Steamtech-Mayhem.mp3 in Resources */,
 				1EB76F092028D5580051DFE6 /* Assets.xcassets in Resources */,
 				1EB76F0C2028D5580051DFE6 /* LaunchScreen.storyboard in Resources */,
 				1EB76F002028D5580051DFE6 /* Actions.sks in Resources */,
@@ -288,6 +291,7 @@
 			files = (
 				1EB76F022028D5580051DFE6 /* GameScene.swift in Sources */,
 				1EB76F042028D5580051DFE6 /* GameViewController.swift in Sources */,
+				3145B8BD20404982005D99EA /* AudioManager.swift in Sources */,
 				1EB76EFC2028D5580051DFE6 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

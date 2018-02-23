@@ -7,16 +7,21 @@
 //
 
 import SpriteKit
-import AVFoundation
+//import AVFoundation
 
 class GameScene: SKScene {
 
+    // Global game objects
     let ship = SKSpriteNode(imageNamed: "ship")
     let backgroundScene1 = SKSpriteNode(imageNamed: "background")
     let backgroundScene2 = SKSpriteNode(imageNamed: "background")
     
-    var audioPlayer = AVAudioPlayer()
-    var backgroundAudio: URL?
+    // Global class objects
+    var audioManager = AudioManager()
+    
+    
+    //var audioPlayer = AVAudioPlayer()
+    //var backgroundAudio: URL?
     
     override func didMove(to view: SKView) {
 
@@ -41,18 +46,9 @@ class GameScene: SKScene {
         backgroundScene2.zPosition = -1
         self.addChild(backgroundScene2)
         
-        // Audio
-        backgroundAudio = Bundle.main.url(forResource: "Steamtech-Mayhem", withExtension: "mp3")
-        do {
-            audioPlayer = try AVAudioPlayer(contentsOf: backgroundAudio!)
-        } catch {
-            print("File not found")
-        }
-        
-        // Loop track
-        audioPlayer.numberOfLoops = -1
-        audioPlayer.prepareToPlay()
-        audioPlayer.play()
+        // AudioManager
+        audioManager.initAudioFiles()
+        audioManager.playBackgroundMusic()
         
     }
     
@@ -102,6 +98,9 @@ class GameScene: SKScene {
         bullet.run(SKAction.sequence([moveTo, delete]))
         
         // Actions - sound
-        bullet.run(SKAction.playSoundFileNamed("LaserShot", waitForCompletion: true))
+        //bullet.run(SKAction.playSoundFileNamed("LaserShot", waitForCompletion: true)) // example
+        audioManager.playPlayerShotSoundSKAction(bullet: bullet) // works very good (frequency)
+        //audioManager.playPlayerShotSound() // works - low frequency
+        
     }
 }
