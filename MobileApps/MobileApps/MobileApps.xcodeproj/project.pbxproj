@@ -22,6 +22,7 @@
 		3145B8C220404BEA005D99EA /* Steamtech-Mayhem.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3145B8C020404BEA005D99EA /* Steamtech-Mayhem.mp3 */; };
 		3145B8C420405CF9005D99EA /* BackgroundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3145B8C320405CF9005D99EA /* BackgroundManager.swift */; };
 		3145B8C620406C25005D99EA /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3145B8C520406C25005D99EA /* Player.swift */; };
+		3145B8C820407FCC005D99EA /* Enemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3145B8C720407FCC005D99EA /* Enemy.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		3145B8C020404BEA005D99EA /* Steamtech-Mayhem.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "Steamtech-Mayhem.mp3"; sourceTree = "<group>"; };
 		3145B8C320405CF9005D99EA /* BackgroundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundManager.swift; sourceTree = "<group>"; };
 		3145B8C520406C25005D99EA /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		3145B8C720407FCC005D99EA /* Enemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemy.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +128,7 @@
 				3145B8BC20404982005D99EA /* AudioManager.swift */,
 				3145B8C320405CF9005D99EA /* BackgroundManager.swift */,
 				3145B8C520406C25005D99EA /* Player.swift */,
+				3145B8C720407FCC005D99EA /* Enemy.swift */,
 			);
 			path = MobileApps;
 			sourceTree = "<group>";
@@ -295,6 +298,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3145B8C820407FCC005D99EA /* Enemy.swift in Sources */,
 				3145B8C420405CF9005D99EA /* BackgroundManager.swift in Sources */,
 				1EB76F022028D5580051DFE6 /* GameScene.swift in Sources */,
 				1EB76F042028D5580051DFE6 /* GameViewController.swift in Sources */,

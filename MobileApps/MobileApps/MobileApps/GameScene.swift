@@ -15,6 +15,8 @@ class GameScene: SKScene {
     var backgroundManager = BackgroundManager()
     var audioManager = AudioManager()
     var player = Player()
+    var enemy = Enemy()
+    var timerEnemy = Timer()
     
     override func didMove(to view: SKView) {
 
@@ -28,6 +30,16 @@ class GameScene: SKScene {
         // Player
         player.initPlayer(gameInstance: self)
         
+        enemy.addEnemy(gameInstance: self)
+        
+        
+        /*timerEnemy = Timer.scheduledTimer(
+            timeInterval: 2,
+            target: enemy,
+            selector: #selector(enemy.addEnemy(gameInstance: self)),
+            userInfo: nil,
+            repeats: true
+        )*/
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -62,6 +74,7 @@ class GameScene: SKScene {
         backgroundManager.updateBackground()
         
     }
+    
     
     // Global access to game instance
     // https://stackoverflow.com/questions/29809643/how-to-make-a-global-variable-that-uses-self-in-swift
