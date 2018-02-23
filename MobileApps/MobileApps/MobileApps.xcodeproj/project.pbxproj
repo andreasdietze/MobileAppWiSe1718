@@ -20,6 +20,7 @@
 		3145B8BD20404982005D99EA /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3145B8BC20404982005D99EA /* AudioManager.swift */; };
 		3145B8C120404BEA005D99EA /* LaserShot.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3145B8BF20404BEA005D99EA /* LaserShot.wav */; };
 		3145B8C220404BEA005D99EA /* Steamtech-Mayhem.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3145B8C020404BEA005D99EA /* Steamtech-Mayhem.mp3 */; };
+		3145B8C420405CF9005D99EA /* BackgroundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3145B8C320405CF9005D99EA /* BackgroundManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		3145B8BC20404982005D99EA /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
 		3145B8BF20404BEA005D99EA /* LaserShot.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = LaserShot.wav; sourceTree = "<group>"; };
 		3145B8C020404BEA005D99EA /* Steamtech-Mayhem.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "Steamtech-Mayhem.mp3"; sourceTree = "<group>"; };
+		3145B8C320405CF9005D99EA /* BackgroundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +122,7 @@
 				1EB76F0A2028D5580051DFE6 /* LaunchScreen.storyboard */,
 				1EB76F0D2028D5580051DFE6 /* Info.plist */,
 				3145B8BC20404982005D99EA /* AudioManager.swift */,
+				3145B8C320405CF9005D99EA /* BackgroundManager.swift */,
 			);
 			path = MobileApps;
 			sourceTree = "<group>";
@@ -289,6 +292,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3145B8C420405CF9005D99EA /* BackgroundManager.swift in Sources */,
 				1EB76F022028D5580051DFE6 /* GameScene.swift in Sources */,
 				1EB76F042028D5580051DFE6 /* GameViewController.swift in Sources */,
 				3145B8BD20404982005D99EA /* AudioManager.swift in Sources */,

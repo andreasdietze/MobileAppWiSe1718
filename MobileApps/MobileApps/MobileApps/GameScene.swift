@@ -18,10 +18,7 @@ class GameScene: SKScene {
     
     // Global class objects
     var audioManager = AudioManager()
-    
-    
-    //var audioPlayer = AVAudioPlayer()
-    //var backgroundAudio: URL?
+    var backgroundManager = BackgroundManager()
     
     override func didMove(to view: SKView) {
 
@@ -30,21 +27,9 @@ class GameScene: SKScene {
         ship.setScale(0.25)
         ship.zPosition = 1
         self.addChild(ship)
-        
-        // Backgrounds
-        self.backgroundColor = SKColor(displayP3Red: 0, green: 104 / 255, blue: 139 / 255, alpha: 1.0)
-        
-        backgroundScene1.anchorPoint = CGPoint.zero
-        backgroundScene1.size = self.size
-        backgroundScene1.zPosition = -1
-        self.addChild(backgroundScene1)
-        
-        backgroundScene2.anchorPoint = CGPoint.zero
-        backgroundScene2.position.x = 0
-        backgroundScene2.position.y = backgroundScene1.size.height - 5
-        backgroundScene2.size = self.size
-        backgroundScene2.zPosition = -1
-        self.addChild(backgroundScene2)
+    
+        // Background
+        backgroundManager.initBackground(gameInstance: self) // Pass as GameScene
         
         // AudioManager
         audioManager.initAudioFiles()
@@ -63,6 +48,7 @@ class GameScene: SKScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
         for touch in touches {
             let locationUser = touch.location(in: self)
             
@@ -70,22 +56,18 @@ class GameScene: SKScene {
                 addBullet()
             }
         }
+        
     }
     
+    // Gameloop
     override func update(_ currentTime: TimeInterval) {
-        backgroundScene1.position.y -= 5
-        backgroundScene2.position.y -= 5
         
-        if backgroundScene1.position.y < -backgroundScene1.size.height {
-            backgroundScene1.position.y = backgroundScene2.position.y + backgroundScene2.size.height
-        }
+        backgroundManager.updateBackground()
         
-        if backgroundScene2.position.y < -backgroundScene2.size.height {
-            backgroundScene2.position.y = backgroundScene1.position.y + backgroundScene1.size.height
-        }
     }
     
     func addBullet() {
+        
         let bullet = SKSpriteNode(imageNamed: "bullet")
         bullet.position = ship.position
         bullet.zPosition = 0
@@ -103,4 +85,15 @@ class GameScene: SKScene {
         //audioManager.playPlayerShotSound() // works - low frequency
         
     }
+    
+    // Global access to game instance
+    // https://stackoverflow.com/questions/29809643/how-to-make-a-global-variable-that-uses-self-in-swift
+    //class var sharedInstance: GameScene {
+      //  return _SingletonSharedInstance
+    //}
+    
 }
+
+// Global access to game instance --> not working T_T
+//private let _SingletonSharedInstance = GameScene()
+
