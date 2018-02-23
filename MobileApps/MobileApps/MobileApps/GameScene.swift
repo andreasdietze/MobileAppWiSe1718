@@ -11,23 +11,13 @@ import SpriteKit
 
 class GameScene: SKScene {
 
-    // Global game objects
-    let ship = SKSpriteNode(imageNamed: "ship")
-    let backgroundScene1 = SKSpriteNode(imageNamed: "background")
-    let backgroundScene2 = SKSpriteNode(imageNamed: "background")
-    
-    // Global class objects
-    var audioManager = AudioManager()
+    // Global class/game objects
     var backgroundManager = BackgroundManager()
+    var audioManager = AudioManager()
+    var player = Player()
     
     override func didMove(to view: SKView) {
 
-        // Player
-        ship.position = CGPoint(x: self.size.width / 2, y: self.size.height / 2 - 200)
-        ship.setScale(0.25)
-        ship.zPosition = 1
-        self.addChild(ship)
-    
         // Background
         backgroundManager.initBackground(gameInstance: self) // Pass as GameScene
         
@@ -35,14 +25,15 @@ class GameScene: SKScene {
         audioManager.initAudioFiles()
         audioManager.playBackgroundMusic()
         
+        // Player
+        player.initPlayer(gameInstance: self)
+        
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         for touch in touches {
-            
-            let locationUser = touch.location(in: self)
-            ship.position.x = locationUser.x
+            player.playerNode.position.x = touch.location(in: self).x
         }
         
     }
@@ -52,8 +43,13 @@ class GameScene: SKScene {
         for touch in touches {
             let locationUser = touch.location(in: self)
             
-            if atPoint(locationUser) == ship {
-                addBullet()
+            if atPoint(locationUser) == player.playerNode {
+                // Add player shots
+                player.addBullet(
+                    gameInstance: self,                     // Game instance
+                    audioManagerInstance: audioManager,     // AudioManager instance
+                    textureName: "bullet"                   // Texture name of the shot/projectile
+                )
             }
         }
         
@@ -62,27 +58,8 @@ class GameScene: SKScene {
     // Gameloop
     override func update(_ currentTime: TimeInterval) {
         
+        // Update background
         backgroundManager.updateBackground()
-        
-    }
-    
-    func addBullet() {
-        
-        let bullet = SKSpriteNode(imageNamed: "bullet")
-        bullet.position = ship.position
-        bullet.zPosition = 0
-        self.addChild(bullet)
-        
-        // Actions - transformation
-        let moveTo = SKAction.moveTo(y: self.size.height + bullet.size.height, duration: 3)
-        let delete = SKAction.removeFromParent()
-        
-        bullet.run(SKAction.sequence([moveTo, delete]))
-        
-        // Actions - sound
-        //bullet.run(SKAction.playSoundFileNamed("LaserShot", waitForCompletion: true)) // example
-        audioManager.playPlayerShotSoundSKAction(bullet: bullet) // works very good (frequency)
-        //audioManager.playPlayerShotSound() // works - low frequency
         
     }
     
