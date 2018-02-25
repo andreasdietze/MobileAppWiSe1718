@@ -25,8 +25,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let playerBulletMask:   UInt32  = 0b10      // binary 2
         
         // Enemy objects
-        let enemyMask:          UInt32  = 0b11      // binary 3
-        let enemyBulletMask:    UInt32  = 0b100     // binary 4
+        let enemyMask:          UInt32  = 0b100     // binary 4
+        let enemyBulletMask:    UInt32  = 0b1000    // binary 8
         
         // Empty object
         let emptyMask:          UInt32  = 0b10000   // binary 16
@@ -39,6 +39,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Set physics behavior
         // default: self.physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
         self.physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
+        
+        // Set contact delegate
+        self.physicsWorld.contactDelegate = self
 
         // Background
         backgroundManager.initBackground(gameInstance: self) // Pass as GameScene
@@ -70,11 +73,18 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // Spawn enemies
             strongSelf.enemy.addEnemy(
                 gameInstance: strongSelf,
-                physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerCollisionMask
+                physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
                 physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
-                physicalMaskEmpty: strongSelf.physicsBodyMask.emptyMask                 // EmptyCollisionMask
+                physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
+                physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask                // PlayerCollisionMask
             )
         }
+    }
+    
+    var foo : Int = 0
+    func didBegin(_ contact: SKPhysicsContact) {
+        foo = foo + 1
+        print("kontakt" + String(foo))
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -96,7 +106,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     gameInstance: self,                                         // Game instance
                     audioManagerInstance: audioManager,                         // AudioManager instance
                     physicsMaskPlayerBullet: physicsBodyMask.playerBulletMask,  // PlayerCollisionMask
-                    physicsMaskEnemy: physicsBodyMask.enemyMask                 // EnemyCollisionMask
+                    physicsMaskEnemy: physicsBodyMask.enemyMask,                // EnemyCollisionMask
+                    physicsMaskEmpty: physicsBodyMask.emptyMask                 // EmptyCollisionMask
                 )
             }
         }

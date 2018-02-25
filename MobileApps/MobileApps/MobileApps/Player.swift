@@ -41,7 +41,7 @@ class Player {
         playerNode.zPosition = 1
         
         // Collider - Circle
-        //playerNode.physicsBody = SKPhysicsBody(circleOfRadius: playerNode.size.width / 2)
+        playerNode.physicsBody = SKPhysicsBody(circleOfRadius: playerNode.size.width / 2)
         
         // Collider - Shape
         playerNode.physicsBody = SKPhysicsBody(
@@ -52,16 +52,18 @@ class Player {
             )
         )
         
+        // Collision: https://stackoverflow.com/questions/31109659/how-does-collisionbitmask-work-swift-spritekit
         // Gravity behavior: no gravity
         playerNode.physicsBody?.affectedByGravity = false
+        //playerNode.physicsBody?.isDynamic = false
 
-        // Set physicsBitMask (Identifier)
-        playerNode.physicsBody?.categoryBitMask = physicsMaskPlayer | physicsMaskEnemy
+        // Set physicsBitMask: defines the category to which this body belongs to
+        playerNode.physicsBody?.categoryBitMask = physicsMaskPlayer
         
-        // Collide only with emtyMask, so no collsion
-        playerNode.physicsBody?.collisionBitMask = physicalMaskEmpty
+        // Set collisionBitMask: defines the categories that can collide with this body (disable to have no tranfsormation affects)
+        playerNode.physicsBody?.collisionBitMask = 0
         
-        // Collide with enemy
+        // Set contanctBitMask: defines which bodies causes intersection notifications with this body
         playerNode.physicsBody?.contactTestBitMask = physicsMaskEnemy
         
         // Add to scene
@@ -69,7 +71,7 @@ class Player {
         
     }
     
-    func addBullet(gameInstance: GameScene, audioManagerInstance: AudioManager, physicsMaskPlayerBullet: UInt32, physicsMaskEnemy: UInt32) {
+    func addBullet(gameInstance: GameScene, audioManagerInstance: AudioManager, physicsMaskPlayerBullet: UInt32, physicsMaskEnemy: UInt32, physicsMaskEmpty: UInt32) {
         
         // Initiate shot node
         bulletNode = SKSpriteNode(texture: bulletTexture)
@@ -98,7 +100,11 @@ class Player {
         
         // Set physicsBitMask - isDynamic = false !!! -> no auto collision handling
         bulletNode.physicsBody?.categoryBitMask = physicsMaskPlayerBullet
-        //bulletNode.physicsBody?.collisionBitMask = physicsMaskCollision
+        
+        bulletNode.physicsBody?.collisionBitMask = 0
+        
+        bulletNode.physicsBody?.contactTestBitMask = physicsMaskEnemy
+        
         
         // Add to scene
         gameInstance.addChild(bulletNode)

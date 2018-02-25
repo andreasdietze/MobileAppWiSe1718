@@ -18,7 +18,7 @@ class Enemy {
     var enemyNode: SKSpriteNode = SKSpriteNode()
     
     // Start parameters for the player
-    @objc func addEnemy(gameInstance: GameScene, physicsMaskPlayerBullet: UInt32, physicsMaskEnemy: UInt32, physicalMaskEmpty: UInt32){
+    @objc func addEnemy(gameInstance: GameScene, physicsMaskPlayerBullet: UInt32, physicsMaskEnemy: UInt32, physicsMaskEmpty: UInt32, physicsMaskPlayer: UInt32){
         
         // Set state of the enemy
         enemyNode = SKSpriteNode(texture: enemyTexture) //(imageNamed: enemyTexture)
@@ -57,12 +57,16 @@ class Enemy {
         
         // Gravity behavior: no gravity
         enemyNode.physicsBody?.affectedByGravity = false
+        //enemyNode.physicsBody?.isDynamic = false
         
         // Set physicsBitMask - isDynamic = false !!! -> no auto collision handling
-        enemyNode.physicsBody?.categoryBitMask = physicsMaskEnemy
+        enemyNode.physicsBody?.categoryBitMask = physicsMaskEnemy // defines the category to which this physics body belongs to
         
-        // Collide only with emtyMask, so no collsion
-        enemyNode.physicsBody?.collisionBitMask = physicalMaskEmpty | physicsMaskPlayerBullet
+        // Collision will occur when enemy hits empty, playerbullet or player
+        enemyNode.physicsBody?.collisionBitMask = 0  // defines the categories that can collide with this body
+        
+        // ContactEvent with bullet and player
+        enemyNode.physicsBody?.contactTestBitMask =  physicsMaskPlayerBullet | physicsMaskPlayer // defines which bodies causes intersection notifications with this body
         
         // Add to scene
         gameInstance.addChild(enemyNode)
