@@ -9,7 +9,7 @@
 import SpriteKit
 //import AVFoundation
 
-class GameScene: SKScene {
+class GameScene: SKScene, SKPhysicsContactDelegate {
 
     // Global class/game objects
     var backgroundManager = BackgroundManager()
@@ -18,7 +18,27 @@ class GameScene: SKScene {
     var enemy = Enemy()
     var timerEnemy = Timer()
     
+    // Define collider masks
+    struct PhysicsBodyMasks {
+        // Player objects
+        let playerMask:         UInt32  = 0b1       // binary 1
+        let playerBulletMask:   UInt32  = 0b10      // binary 2
+        
+        // Enemy objects
+        let enemyMask:          UInt32  = 0b11      // binary 3
+        let enemyBulletMask:    UInt32  = 0b100     // binary 4
+        
+        // Empty object
+        let emptyMask:          UInt32  = 0b10000   // binary 16
+    }
+    
+    var physicsBodyMask = PhysicsBodyMasks()
+    
     override func didMove(to view: SKView) {
+        
+        // Set physics behavior
+        // default: self.physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
+        self.physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
 
         // Background
         backgroundManager.initBackground(gameInstance: self) // Pass as GameScene
@@ -28,18 +48,33 @@ class GameScene: SKScene {
         audioManager.playBackgroundMusic()
         
         // Player
-        player.initPlayer(gameInstance: self)
+        player.initPlayer(
+            gameInstance: self,
+            physicsMaskPlayer: physicsBodyMask.playerBulletMask,    // PlayerCollisionMask
+            physicsMaskEnemy: physicsBodyMask.enemyMask,            // EnemyCollisionMask
+            physicalMaskEmpty: physicsBodyMask.emptyMask            // EmptyCollisionMask
+        )
         
-        enemy.addEnemy(gameInstance: self)
-        
-        
-        /*timerEnemy = Timer.scheduledTimer(
-            timeInterval: 2,
-            target: enemy,
-            selector: #selector(enemy.addEnemy(gameInstance: self)),
-            userInfo: nil,
-            repeats: true
-        )*/
+        // Enemies
+        // https://stackoverflow.com/questions/40613556/timer-scheduledtimer-does-not-work-in-swift-3
+        timerEnemy = Timer.scheduledTimer(withTimeInterval: 2, repeats: true){
+            
+            //"[weak self]" creates a "capture group" for timer
+            [weak self] timer in
+            
+            //Add a guard statement to bail out of the timer code
+            //if the object has been freed.
+            guard let strongSelf = self else {
+                return
+            }
+            // Spawn enemies
+            strongSelf.enemy.addEnemy(
+                gameInstance: strongSelf,
+                physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerCollisionMask
+                physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
+                physicalMaskEmpty: strongSelf.physicsBodyMask.emptyMask                 // EmptyCollisionMask
+            )
+        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -58,9 +93,10 @@ class GameScene: SKScene {
             if atPoint(locationUser) == player.playerNode {
                 // Add player shots
                 player.addBullet(
-                    gameInstance: self,                     // Game instance
-                    audioManagerInstance: audioManager,     // AudioManager instance
-                    textureName: "bullet"                   // Texture name of the shot/projectile
+                    gameInstance: self,                                         // Game instance
+                    audioManagerInstance: audioManager,                         // AudioManager instance
+                    physicsMaskPlayerBullet: physicsBodyMask.playerBulletMask,  // PlayerCollisionMask
+                    physicsMaskEnemy: physicsBodyMask.enemyMask                 // EnemyCollisionMask
                 )
             }
         }

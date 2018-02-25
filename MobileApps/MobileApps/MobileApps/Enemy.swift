@@ -12,19 +12,22 @@ import SpriteKit
 class Enemy {
     
     // Enemy texture
-    let enemyTexture = "bluedestroyer"
+    let enemyTexture = SKTexture(imageNamed: "bluedestroyer")
     
     // Enemy object
     var enemyNode: SKSpriteNode = SKSpriteNode()
     
     // Start parameters for the player
-    func addEnemy(gameInstance: GameScene){
+    @objc func addEnemy(gameInstance: GameScene, physicsMaskPlayerBullet: UInt32, physicsMaskEnemy: UInt32, physicalMaskEmpty: UInt32){
         
         // Set state of the enemy
-        enemyNode = SKSpriteNode(imageNamed: enemyTexture)
+        enemyNode = SKSpriteNode(texture: enemyTexture) //(imageNamed: enemyTexture)
         
-        // Set enemy start position
-        enemyNode.position = CGPoint(x: 200, y: 600)//CGPoint(x: gameInstance.size.width / 2, y: gameInstance.size.height + enemyNode.size.height)
+        // Set enemy start position: x:random within client view, y: top of client view + texture height
+        enemyNode.position = CGPoint(
+            x: CGFloat(arc4random_uniform(UInt32(gameInstance.size.width))),
+            y: gameInstance.size.height + enemyNode.size.height
+        )
         
         // Set enemy scale
         enemyNode.setScale(0.25)
@@ -34,6 +37,32 @@ class Enemy {
         
         // Set z-index
         enemyNode.zPosition = 1
+        
+        // Collider - Rectangle
+        /*enemyNode.physicsBody = SKPhysicsBody(
+            rectangleOf: CGSize(
+                width: enemyNode.size.width, // / 2,
+                height: enemyNode.size.height // / 2
+            )
+        )*/
+        
+        // Collider - Shape
+        enemyNode.physicsBody = SKPhysicsBody(
+            texture: enemyTexture,
+            size: CGSize(
+                width: enemyTexture.size().width / 4,
+                height: enemyTexture.size().height / 4
+            )
+        )
+        
+        // Gravity behavior: no gravity
+        enemyNode.physicsBody?.affectedByGravity = false
+        
+        // Set physicsBitMask - isDynamic = false !!! -> no auto collision handling
+        enemyNode.physicsBody?.categoryBitMask = physicsMaskEnemy
+        
+        // Collide only with emtyMask, so no collsion
+        enemyNode.physicsBody?.collisionBitMask = physicalMaskEmpty | physicsMaskPlayerBullet
         
         // Add to scene
         gameInstance.addChild(enemyNode)

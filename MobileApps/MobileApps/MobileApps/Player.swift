@@ -12,18 +12,24 @@ import SpriteKit
 class Player {
     
     // Player texture
-    let playerTexture = "ship"
+    let playerTexture = SKTexture(imageNamed: "ship") //"ship"
     
     // Player object --> With ! u know the var now has no state but will have one before its first call.
     // The problem is that there is no access to any specific funcs/vars before init and return
     //var player: SKSpriteNode!
     var playerNode: SKSpriteNode = SKSpriteNode()  // Works -> empty node
     
+    // Shot texture
+    let bulletTexture = SKTexture(imageNamed: "bullet")
+    
+    // Shot node
+    var bulletNode: SKSpriteNode = SKSpriteNode()
+    
     // Start parameters for the player
-    func initPlayer(gameInstance: GameScene){
+    func initPlayer(gameInstance: GameScene, physicsMaskPlayer: UInt32, physicsMaskEnemy: UInt32, physicalMaskEmpty: UInt32){
         
         // Set state of the player
-        playerNode = SKSpriteNode(imageNamed: playerTexture)
+        playerNode = SKSpriteNode(texture: playerTexture) //(imageNamed: playerTexture)
         
         // Set player start position
         playerNode.position = CGPoint(x: gameInstance.size.width / 2, y: gameInstance.size.height / 2 - 200)
@@ -34,28 +40,72 @@ class Player {
         // Set z-index
         playerNode.zPosition = 1
         
+        // Collider - Circle
+        //playerNode.physicsBody = SKPhysicsBody(circleOfRadius: playerNode.size.width / 2)
+        
+        // Collider - Shape
+        playerNode.physicsBody = SKPhysicsBody(
+            texture: playerTexture,
+            size: CGSize(
+                width: playerTexture.size().width / 4,
+                height: playerTexture.size().height / 4
+            )
+        )
+        
+        // Gravity behavior: no gravity
+        playerNode.physicsBody?.affectedByGravity = false
+
+        // Set physicsBitMask (Identifier)
+        playerNode.physicsBody?.categoryBitMask = physicsMaskPlayer | physicsMaskEnemy
+        
+        // Collide only with emtyMask, so no collsion
+        playerNode.physicsBody?.collisionBitMask = physicalMaskEmpty
+        
+        // Collide with enemy
+        playerNode.physicsBody?.contactTestBitMask = physicsMaskEnemy
+        
         // Add to scene
         gameInstance.addChild(playerNode)
         
     }
     
-    func addBullet(gameInstance: GameScene, audioManagerInstance: AudioManager, textureName: String) {
+    func addBullet(gameInstance: GameScene, audioManagerInstance: AudioManager, physicsMaskPlayerBullet: UInt32, physicsMaskEnemy: UInt32) {
         
         // Initiate shot node
-        let bullet = SKSpriteNode(imageNamed: textureName)
+        bulletNode = SKSpriteNode(texture: bulletTexture)
         
         // Set position relative to player
-        bullet.position = playerNode.position
+        bulletNode.position = playerNode.position
         
         // Set z-index
-        bullet.zPosition = 0
+        bulletNode.zPosition = 1
+        
+        // Collider - Circle
+        //bulletNode.physicsBody = SKPhysicsBody(circleOfRadius: bulletNode.size.width / 5)
+        
+        // Collider - Shape
+        bulletNode.physicsBody = SKPhysicsBody(
+            texture: bulletTexture,
+            size: CGSize(
+                width: bulletTexture.size().width / 4,
+                height: bulletTexture.size().height / 4
+            )
+        )
+        
+        // Gravity behavior: not affected by gravity, not affected by other forces
+        bulletNode.physicsBody?.isDynamic = false
+        //bulletNode.physicsBody?.affectedByGravity = false
+        
+        // Set physicsBitMask - isDynamic = false !!! -> no auto collision handling
+        bulletNode.physicsBody?.categoryBitMask = physicsMaskPlayerBullet
+        //bulletNode.physicsBody?.collisionBitMask = physicsMaskCollision
         
         // Add to scene
-        gameInstance.addChild(bullet)
+        gameInstance.addChild(bulletNode)
         
         // Set target position for the shot (when reached, the shot will be deleted)
         // Target position: client height + texture height
-        let targetPositionY: CGFloat = gameInstance.size.height + bullet.size.height
+        let targetPositionY: CGFloat = gameInstance.size.height + bulletNode.size.height
         
         // Action - transformation
         let moveTo = SKAction.moveTo(
@@ -67,10 +117,10 @@ class Player {
         let delete = SKAction.removeFromParent()
         
         // Execute action sequence (I totally freak out Oo - what a nice Framework)
-        bullet.run(SKAction.sequence([moveTo, delete]))
+        bulletNode.run(SKAction.sequence([moveTo, delete]))
         
         // Action - sound
-        audioManagerInstance.playPlayerShotSoundSKAction(bullet: bullet) // works very good (frequency)
+        audioManagerInstance.playPlayerShotSoundSKAction(bullet: bulletNode) // works very good (frequency)
         //audioManager.playPlayerShotSound() // works - low frequency
         
     }
