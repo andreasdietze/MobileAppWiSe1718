@@ -66,7 +66,7 @@ class Enemy {
         enemyNode.physicsBody?.collisionBitMask = 0  // defines the categories that can collide with this body
         
         // ContactEvent with bullet and player
-        enemyNode.physicsBody?.contactTestBitMask =  physicsMaskPlayerBullet | physicsMaskPlayer // defines which bodies causes intersection notifications with this body
+        enemyNode.physicsBody?.contactTestBitMask =  physicsMaskPlayerBullet //| physicsMaskPlayer // defines which bodies causes intersection notifications with this body
         
         // Add to scene
         gameInstance.addChild(enemyNode)

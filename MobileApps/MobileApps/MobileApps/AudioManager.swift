@@ -25,6 +25,10 @@ class AudioManager {
     let playerLaserShotAudioSource = "LaserShot"
     let playerLaserShotAudioSourceExtension = "wav"
     
+    // ExplosionOne
+    let explosionOneAudioSource = "explosion"
+    let explosionOneAudioSourceExtension = "wav"
+    
     // Load and init the audio source data
     func initAudioFiles (){
         // Set resource identifier and file extension
@@ -64,6 +68,10 @@ class AudioManager {
     func playPlayerShotSoundSKAction(bullet: SKSpriteNode){
         // Allows high frequency due to a seperate AVAudioPlayer-Instance for each shot
         bullet.run(SKAction.playSoundFileNamed(playerLaserShotAudioSource, waitForCompletion: true))
+    }
+    
+    func playExplosionOneSKAction(gameInstance: GameScene){
+        gameInstance.run(SKAction.playSoundFileNamed(explosionOneAudioSource, waitForCompletion: true))
     }
     
 

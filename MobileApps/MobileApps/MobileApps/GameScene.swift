@@ -53,9 +53,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Player
         player.initPlayer(
             gameInstance: self,
-            physicsMaskPlayer: physicsBodyMask.playerBulletMask,    // PlayerCollisionMask
-            physicsMaskEnemy: physicsBodyMask.enemyMask,            // EnemyCollisionMask
-            physicalMaskEmpty: physicsBodyMask.emptyMask            // EmptyCollisionMask
+            physicsMaskPlayer: physicsBodyMask.playerMask,  // PlayerCollisionMask
+            physicsMaskEnemy: physicsBodyMask.enemyMask,    // EnemyCollisionMask
+            physicalMaskEmpty: physicsBodyMask.emptyMask    // EmptyCollisionMask
         )
         
         // Enemies
@@ -83,8 +83,46 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     var foo : Int = 0
     func didBegin(_ contact: SKPhysicsContact) {
-        foo = foo + 1
-        print("kontakt" + String(foo))
+       
+        
+        let contactMask = contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask
+        
+        switch contactMask {
+        // PlayerBullet collide with enemy
+        case physicsBodyMask.playerBulletMask | physicsBodyMask.enemyMask :
+            print("Collision: PlayerBullet collide with Enemy")
+            
+            // BodyA: enemy with mask 4
+            print("Mask of A: " + String(contact.bodyA.categoryBitMask))
+            // Remove bodyA
+            contact.bodyA.node?.removeFromParent()
+            
+            
+            // BodyB: playerBullet with mask 2
+            print("Mask of B: " + String(contact.bodyB.categoryBitMask))
+            // Remove bodyB
+            contact.bodyB.node?.removeFromParent()
+            break
+            
+        // Player collide with enemy
+        case physicsBodyMask.playerMask | physicsBodyMask.enemyMask :
+            print("Collision: Player collide with Enemy")
+            
+            // BodyA: player with mask 1
+            print("Mask of A: " + String(contact.bodyA.categoryBitMask))
+            // TODO: player dies, player respawn, lifecount--, final death
+            
+            // BodyB: enemy with mask 4
+            print("Mask of B: " + String(contact.bodyB.categoryBitMask))
+            // Trigger explosion sound
+            audioManager.playExplosionOneSKAction(gameInstance: self)
+            // Remove bodyB
+            contact.bodyB.node?.removeFromParent()
+            break
+            
+        default:
+            break
+        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
