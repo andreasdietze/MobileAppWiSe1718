@@ -14,6 +14,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // Global class/game objects
     var backgroundManager = BackgroundManager()
     var audioManager = AudioManager()
+    var protoStarManager = ProtoStarManager()
     var player = Player()
     var enemy = Enemy()
     var timerEnemy = Timer()
@@ -30,6 +31,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Empty object
         let emptyMask:          UInt32  = 0b10000   // binary 16
+        
+        // ProtoStar
+        let protoStarMask:      UInt32  = 0b100000  // binary 32
         
     }
     
@@ -71,8 +75,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             guard let strongSelf = self else {
                 return
             }
+            
             // Spawn enemies
-            strongSelf.enemy.addEnemy(
+            /*strongSelf.enemy.addEnemy(
                 gameInstance: strongSelf,
                 physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
                 physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
@@ -87,9 +92,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
                 physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask                // PlayerCollisionMask
                 
-            )
+            )*/
             
-            //strongSelf.enemy.addEnemyExplosionSheet(gameInstance: strongSelf, enemyPosition: CGPoint(x: 100, y: 100))
+            strongSelf.protoStarManager.addProtoStar(
+                gameInstance: strongSelf,
+                physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
+                physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
+                physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
+                physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask,               // PlayerCollisionMask
+                physicsMaskProtoStar: strongSelf.physicsBodyMask.protoStarMask          // ProtoStarCollsionMask
+                
+            )
         }
     }
     
@@ -153,6 +166,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
+    func getContactPlayerWithProtoStar(playerNode: SKSpriteNode, protoStarNode: SKSpriteNode){
+        player.killPlayer(gameInstance: self, playerNode: playerNode)
+        
+        // TODO: End the game, go back to start menue
+    }
+    
+    // Just remove the bullet, a proto star cannot be killed
+    func getContactPlayerBulletWithProtoStar(playerBulletNode: SKSpriteNode, protoStarNode: SKSpriteNode){
+        // If bodyA is the bullet, delte bodyA
+        if playerBulletNode.name == "bullet" {
+            playerBulletNode.removeFromParent()
+        }
+        
+        // if bodyB is the bullet, delete bodyB
+        if protoStarNode.name == "bullet" {
+            protoStarNode.removeFromParent()
+        }
+    }
+    
     func didBegin(_ contact: SKPhysicsContact) {
         
         let contactMask = contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask
@@ -176,15 +208,46 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
            // print("Collision: PlayerBullet collide with Enemy")
             
             // BodyA: enemy with mask 4
-            //print("Mask of A: " + String(contact.bodyA.categoryBitMask))
+            print("Mask of A: " + String(contact.bodyA.categoryBitMask))
             
             // BodyB: playerBullet with mask 2
-           // print("Mask of B: " + String(contact.bodyB.categoryBitMask))
+            print("Mask of B: " + String(contact.bodyB.categoryBitMask))
 
             // Handle collision
             getContactPlayerBulletWithEnemy(
                 playerBulletNode: nodeB as! SKSpriteNode,   // Cast to SKSPriteNode
                 enemyNode: nodeA as! SKSpriteNode           // Cast to SKSPriteNode
+            )
+            break
+            
+    
+        // PlayerBullet collide with protoStar
+        case physicsBodyMask.playerBulletMask | physicsBodyMask.protoStarMask :
+            
+            // Check if nodes are available, catch otherwise
+            guard let nodeA = contact.bodyA.node else {
+                print("Node A not found")
+                return
+            }
+            
+            guard let nodeB = contact.bodyB.node else {
+                print("Node B not found")
+                return
+            }
+            
+            // Collision occur for sure
+            // print("Collision: PlayerBullet collide with ProtoStar")
+            
+            // BodyA: protoStar with mask 32
+            print("Mask of A: " + String(contact.bodyA.categoryBitMask))
+            
+            // BodyB: playerBullet with mask 2
+            print("Mask of B: " + String(contact.bodyB.categoryBitMask))
+            
+            // Handle collision
+            getContactPlayerBulletWithProtoStar(
+                playerBulletNode: nodeB as! SKSpriteNode,   // Cast to SKSPriteNode
+                protoStarNode: nodeA as! SKSpriteNode           // Cast to SKSPriteNode
             )
             break
             
@@ -205,10 +268,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //print("Collision: Player collide with Enemy")
             
             // BodyA: player with mask 1
-           // print("Mask of A: " + String(contact.bodyA.categoryBitMask))
+            print("Mask of A: " + String(contact.bodyA.categoryBitMask))
 
             // BodyB: enemy with mask 4
-           // print("Mask of B: " + String(contact.bodyB.categoryBitMask))
+            print("Mask of B: " + String(contact.bodyB.categoryBitMask))
             
             // Handle collision
             getContactPlayerWithEnemy(
@@ -217,12 +280,41 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             )
             break
             
+        // Player collide with enemy
+        case physicsBodyMask.playerMask | physicsBodyMask.protoStarMask :
+            // Check if nodes are available, catch otherwise
+            guard let nodeA = contact.bodyA.node else {
+                print("Node A not found")
+                return
+            }
+            
+            guard let nodeB = contact.bodyB.node else {
+                print("Node B not found")
+                return
+            }
+            
+            // Collision occur for sure
+            //print("Collision: Player collide with ProtoStar")
+            
+            // BodyA: player with mask 1
+            print("Mask of A: " + String(contact.bodyA.categoryBitMask))
+            
+            // BodyB: enemy with mask 32
+            print("Mask of B: " + String(contact.bodyB.categoryBitMask))
+            
+            // Handle collision
+            getContactPlayerWithProtoStar(
+                playerNode: nodeA as! SKSpriteNode,     // Cast to SKSPriteNode
+                protoStarNode: nodeB as! SKSpriteNode   // Cast to SKSPriteNode
+            )
+            break
+            
         default:
             break
         }
     }
     
-    // Wird komischerweise nicht aufgerufen ????
+    // Wird komischerweise nicht aufgerufen ???? --> Wird aufgerufen, wenn für elemente kein case erstellt wurde (was zur ...)
     func didEnd(_ contact: SKPhysicsContact) {
         
         print("Contact finished")

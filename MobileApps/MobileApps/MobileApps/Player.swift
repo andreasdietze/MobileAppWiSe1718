@@ -14,6 +14,8 @@ class Player {
     // Player texture
     let playerTexture = SKTexture(imageNamed: "ship") //"ship"
     
+    var isPlayerAlive: Bool = true
+    
     // Player object --> With ! u know the var now has no state but will have one before its first call.
     // The problem is that there is no access to any specific funcs/vars before init and return
     //var player: SKSpriteNode!
@@ -169,12 +171,34 @@ class Player {
     
     // Decrease player life count by one
     public func decreaseLifeCount(gameInstance: GameScene){
+        // If player hits an enemy
         if lifeCount > 0 {
             lifeCount = lifeCount - 1
+        }
+        
+        // Set player dead if life count is zero
+        if lifeCount == 0 {
+            isPlayerAlive = false
         }
         
         let deleteNode = gameInstance.childNode(withName: "live" + String(lifeCount))
         deleteNode?.removeFromParent()
         
+    }
+    
+    // Kill the player instant
+    public func killPlayer(gameInstance: GameScene, playerNode: SKSpriteNode){
+        // For every life
+        for index in 0...lifeCount {
+            // Delete it
+            let deleteNode = gameInstance.childNode(withName: "live" + String(index))
+            deleteNode?.removeFromParent()
+        }
+        
+        // Set player dead
+        isPlayerAlive = false
+        
+        // Delete player node
+        playerNode.removeFromParent()
     }
 }
