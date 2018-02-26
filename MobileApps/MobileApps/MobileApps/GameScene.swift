@@ -83,15 +83,15 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     func getContactPlayerBulletWithEnemy(){}
     
-    func getContactPlayerWithEnemy(player: SKSpriteNode, enemy: SKSpriteNode){
+    func getContactPlayerWithEnemy(playerNode: SKSpriteNode, enemyNode: SKSpriteNode){
         // Trigger explosion sound
         audioManager.playExplosionOneSKAction(gameInstance: self)
         //audioManager.playExplosionOneSKAction(physicsBody: contact.bodyB.node as! SKSpriteNode)
         // Remove bodyB
-        enemy.removeFromParent()
+        enemyNode.removeFromParent()
         
         // Start player got hit / respawn action
-        player.run(
+        playerNode.run(
             // Repeat action
             SKAction.repeat(
                 // Start sequence action
@@ -111,6 +111,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 count: 10   // Repeat 10 times
             )
         )
+        
+        // Decrease player life count
+        player.decreaseLifeCount(gameInstance: self)
+        
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -172,8 +176,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             // Handle collision
             getContactPlayerWithEnemy(
-                player: nodeA as! SKSpriteNode, // Cast to SKSPriteNode
-                enemy: nodeB as! SKSpriteNode   // Cast to SKSPriteNode
+                playerNode: nodeA as! SKSpriteNode, // Cast to SKSPriteNode
+                enemyNode: nodeB as! SKSpriteNode   // Cast to SKSPriteNode
             )
             break
             

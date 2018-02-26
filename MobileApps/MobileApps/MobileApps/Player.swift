@@ -25,6 +25,9 @@ class Player {
     // Shot node
     var bulletNode: SKSpriteNode = SKSpriteNode()
     
+    // Life count
+    var lifeCount: Int = 4
+    
     // Start parameters for the player
     func initPlayer(gameInstance: GameScene, physicsMaskPlayer: UInt32, physicsMaskEnemy: UInt32, physicalMaskEmpty: UInt32){
         
@@ -70,7 +73,7 @@ class Player {
         gameInstance.addChild(playerNode)
         
         // Init player life
-        setPlayerLifeCount(lifeCount: 4, gameInstance: gameInstance)
+        setPlayerLifeCount(lifeCount: lifeCount, gameInstance: gameInstance)
         
     }
     
@@ -141,6 +144,9 @@ class Player {
             // Define the node
             let lifeNode = SKSpriteNode(imageNamed: "live")
             
+            // Set name
+            lifeNode.name = "live" + String(index)
+            
             // Place the nodes
             lifeNode.anchorPoint = CGPoint(x: 0, y:0)
             lifeNode.position.x = CGFloat(index) * lifeNode.size.width
@@ -155,5 +161,16 @@ class Player {
             // Add to scene
             gameInstance.addChild(lifeNode)
         }
+    }
+    
+    // Decrease player life count by one
+    public func decreaseLifeCount(gameInstance: GameScene){
+        if lifeCount > 0 {
+            lifeCount = lifeCount - 1
+        }
+        
+        let deleteNode = gameInstance.childNode(withName: "live" + String(lifeCount))
+        deleteNode?.removeFromParent()
+        
     }
 }
