@@ -69,6 +69,9 @@ class Player {
         // Add to scene
         gameInstance.addChild(playerNode)
         
+        // Init player life
+        setPlayerLifeCount(lifeCount: 4, gameInstance: gameInstance)
+        
     }
     
     func addBullet(gameInstance: GameScene, audioManagerInstance: AudioManager, physicsMaskPlayerBullet: UInt32, physicsMaskEnemy: UInt32, physicsMaskEmpty: UInt32) {
@@ -129,5 +132,28 @@ class Player {
         audioManagerInstance.playPlayerShotSoundSKAction(bullet: bulletNode) // works very good (frequency)
         //audioManager.playPlayerShotSound() // works - low frequency
         
+    }
+    
+    // Set player life cound
+    func setPlayerLifeCount(lifeCount: Int, gameInstance: GameScene){
+        // For every spriteNode
+        for index in 0...lifeCount - 1 {
+            // Define the node
+            let lifeNode = SKSpriteNode(imageNamed: "live")
+            
+            // Place the nodes
+            lifeNode.anchorPoint = CGPoint(x: 0, y:0)
+            lifeNode.position.x = CGFloat(index) * lifeNode.size.width
+            lifeNode.position.y = gameInstance.size.height - lifeNode.size.height
+            
+            // Scale
+            lifeNode.setScale(0.75)
+            
+            // Z-Index: over all other objects
+            lifeNode.zPosition = 2
+            
+            // Add to scene
+            gameInstance.addChild(lifeNode)
+        }
     }
 }

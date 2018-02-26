@@ -81,43 +81,100 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    var foo : Int = 0
+    func getContactPlayerBulletWithEnemy(){}
+    
+    func getContactPlayerWithEnemy(player: SKSpriteNode, enemy: SKSpriteNode){
+        // Trigger explosion sound
+        audioManager.playExplosionOneSKAction(gameInstance: self)
+        //audioManager.playExplosionOneSKAction(physicsBody: contact.bodyB.node as! SKSpriteNode)
+        // Remove bodyB
+        enemy.removeFromParent()
+        
+        // Start player got hit / respawn action
+        player.run(
+            // Repeat action
+            SKAction.repeat(
+                // Start sequence action
+                SKAction.sequence(
+                    // Sequence array content
+                    [
+                        SKAction.fadeAlpha(
+                            to: 0.1,
+                            duration: 0.1
+                        ),
+                        SKAction.fadeAlpha(
+                            to: 1.0,
+                            duration: 0.1
+                        )
+                    ]
+                ),
+                count: 10   // Repeat 10 times
+            )
+        )
+    }
+    
     func didBegin(_ contact: SKPhysicsContact) {
-       
         
         let contactMask = contact.bodyA.categoryBitMask | contact.bodyB.categoryBitMask
         
         switch contactMask {
         // PlayerBullet collide with enemy
         case physicsBodyMask.playerBulletMask | physicsBodyMask.enemyMask :
+            
+            // Check if nodes are available, catch otherwise
+            guard let nodeA = contact.bodyA.node else {
+                print("Node A not found")
+                return
+            }
+            
+            guard let nodeB = contact.bodyB.node else {
+                print("Node B not found")
+                return
+            }
+            
+            // Collision occur for sure
             print("Collision: PlayerBullet collide with Enemy")
             
             // BodyA: enemy with mask 4
             print("Mask of A: " + String(contact.bodyA.categoryBitMask))
             // Remove bodyA
-            contact.bodyA.node?.removeFromParent()
-            
+            nodeA.removeFromParent() // //contact.bodyA.node?.removeFromParent()
             
             // BodyB: playerBullet with mask 2
-            print("Mask of B: " + String(contact.bodyB.categoryBitMask))
-            // Remove bodyB
-            contact.bodyB.node?.removeFromParent()
-            break
-            
-        // Player collide with enemy
-        case physicsBodyMask.playerMask | physicsBodyMask.enemyMask :
-            print("Collision: Player collide with Enemy")
-            
-            // BodyA: player with mask 1
-            print("Mask of A: " + String(contact.bodyA.categoryBitMask))
-            // TODO: player dies, player respawn, lifecount--, final death
-            
-            // BodyB: enemy with mask 4
             print("Mask of B: " + String(contact.bodyB.categoryBitMask))
             // Trigger explosion sound
             audioManager.playExplosionOneSKAction(gameInstance: self)
             // Remove bodyB
-            contact.bodyB.node?.removeFromParent()
+            nodeB.removeFromParent()
+            break
+            
+        // Player collide with enemy
+        case physicsBodyMask.playerMask | physicsBodyMask.enemyMask :
+            // Check if nodes are available, catch otherwise
+            guard let nodeA = contact.bodyA.node else {
+                print("Node A not found")
+                return
+            }
+            
+            guard let nodeB = contact.bodyB.node else {
+                print("Node B not found")
+                return
+            }
+            
+            // Collision occur for sure
+            print("Collision: Player collide with Enemy")
+            
+            // BodyA: player with mask 1
+            print("Mask of A: " + String(contact.bodyA.categoryBitMask))
+
+            // BodyB: enemy with mask 4
+            print("Mask of B: " + String(contact.bodyB.categoryBitMask))
+            
+            // Handle collision
+            getContactPlayerWithEnemy(
+                player: nodeA as! SKSpriteNode, // Cast to SKSPriteNode
+                enemy: nodeB as! SKSpriteNode   // Cast to SKSPriteNode
+            )
             break
             
         default:
