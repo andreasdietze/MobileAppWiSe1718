@@ -69,6 +69,9 @@ class Player {
         // Set contanctBitMask: defines which bodies causes intersection notifications with this body
         playerNode.physicsBody?.contactTestBitMask = physicsMaskEnemy
         
+        // Set player name
+        playerNode.name = "ship"
+        
         // Add to scene
         gameInstance.addChild(playerNode)
         
@@ -111,6 +114,7 @@ class Player {
         
         bulletNode.physicsBody?.contactTestBitMask = physicsMaskEnemy
         
+        bulletNode.name = "bullet"
         
         // Add to scene
         gameInstance.addChild(bulletNode)

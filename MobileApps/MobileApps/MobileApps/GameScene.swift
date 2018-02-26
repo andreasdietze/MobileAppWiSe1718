@@ -79,17 +79,52 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
                 physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask                // PlayerCollisionMask
             )
+            
+            strongSelf.enemy.addEnemySheet(
+                gameInstance: strongSelf,
+                physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
+                physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
+                physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
+                physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask                // PlayerCollisionMask
+                
+            )
+            
+            //strongSelf.enemy.addEnemyExplosionSheet(gameInstance: strongSelf, enemyPosition: CGPoint(x: 100, y: 100))
         }
     }
     
-    func getContactPlayerBulletWithEnemy(){}
+    func getContactPlayerBulletWithEnemy(playerBulletNode: SKSpriteNode, enemyNode: SKSpriteNode){
+        
+        // Remove bullet
+        playerBulletNode.removeFromParent()
+        
+        // Trigger explosion sound
+        audioManager.playExplosionOneSKAction(gameInstance: self)
+        
+        // Trigger explosion (only one time)
+        if enemy.contactBegin {
+            enemy.addEnemyExplosionSheet(gameInstance: self, enemyPosition: enemyNode.position)
+            enemy.contactBegin = false
+        }
+        
+        // Remove enemy
+        enemyNode.removeFromParent()
+    }
     
     func getContactPlayerWithEnemy(playerNode: SKSpriteNode, enemyNode: SKSpriteNode){
         // Trigger explosion sound
         audioManager.playExplosionOneSKAction(gameInstance: self)
-        //audioManager.playExplosionOneSKAction(physicsBody: contact.bodyB.node as! SKSpriteNode)
+        
+        // Trigger explosion
+        if enemy.contactBegin {
+            enemy.addEnemyExplosionSheet(gameInstance: self, enemyPosition: enemyNode.position)
+            enemy.contactBegin = false
+        }
+
         // Remove bodyB
         enemyNode.removeFromParent()
+        
+        // -------- Player Stuff -------- //
         
         // Start player got hit / respawn action
         playerNode.run(
@@ -138,19 +173,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
             // Collision occur for sure
-            print("Collision: PlayerBullet collide with Enemy")
+           // print("Collision: PlayerBullet collide with Enemy")
             
             // BodyA: enemy with mask 4
-            print("Mask of A: " + String(contact.bodyA.categoryBitMask))
-            // Remove bodyA
-            nodeA.removeFromParent() // //contact.bodyA.node?.removeFromParent()
+            //print("Mask of A: " + String(contact.bodyA.categoryBitMask))
             
             // BodyB: playerBullet with mask 2
-            print("Mask of B: " + String(contact.bodyB.categoryBitMask))
-            // Trigger explosion sound
-            audioManager.playExplosionOneSKAction(gameInstance: self)
-            // Remove bodyB
-            nodeB.removeFromParent()
+           // print("Mask of B: " + String(contact.bodyB.categoryBitMask))
+
+            // Handle collision
+            getContactPlayerBulletWithEnemy(
+                playerBulletNode: nodeB as! SKSpriteNode,   // Cast to SKSPriteNode
+                enemyNode: nodeA as! SKSpriteNode           // Cast to SKSPriteNode
+            )
             break
             
         // Player collide with enemy
@@ -167,13 +202,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
             // Collision occur for sure
-            print("Collision: Player collide with Enemy")
+            //print("Collision: Player collide with Enemy")
             
             // BodyA: player with mask 1
-            print("Mask of A: " + String(contact.bodyA.categoryBitMask))
+           // print("Mask of A: " + String(contact.bodyA.categoryBitMask))
 
             // BodyB: enemy with mask 4
-            print("Mask of B: " + String(contact.bodyB.categoryBitMask))
+           // print("Mask of B: " + String(contact.bodyB.categoryBitMask))
             
             // Handle collision
             getContactPlayerWithEnemy(
@@ -184,6 +219,19 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
         default:
             break
+        }
+    }
+    
+    // Wird komischerweise nicht aufgerufen ????
+    func didEnd(_ contact: SKPhysicsContact) {
+        
+        print("Contact finished")
+        
+        if contact.bodyA.node?.name == "bullet" || contact.bodyB.node?.name == "bullet"
+        || contact.bodyA.node?.name == "ship"   || contact.bodyB.node?.name == "ship" {
+            enemy.contactBegin = true
+             print("Contact finished")
+            
         }
     }
     
