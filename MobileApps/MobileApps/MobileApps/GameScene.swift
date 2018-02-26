@@ -30,6 +30,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Empty object
         let emptyMask:          UInt32  = 0b10000   // binary 16
+        
     }
     
     var physicsBodyMask = PhysicsBodyMasks()

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1E53F289204417560095B51B /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E53F288204417560095B51B /* MainMenu.swift */; };
 		1EB76EFC2028D5580051DFE6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB76EFB2028D5580051DFE6 /* AppDelegate.swift */; };
 		1EB76EFE2028D5580051DFE6 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 1EB76EFD2028D5580051DFE6 /* GameScene.sks */; };
 		1EB76F002028D5580051DFE6 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 1EB76EFF2028D5580051DFE6 /* Actions.sks */; };
@@ -44,6 +45,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1E53F288204417560095B51B /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
 		1EB76EF82028D5580051DFE6 /* MobileApps.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MobileApps.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1EB76EFB2028D5580051DFE6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1EB76EFD2028D5580051DFE6 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 			children = (
 				3145B8BE20404B93005D99EA /* Sound */,
 				1EB76EFB2028D5580051DFE6 /* AppDelegate.swift */,
+				1E53F288204417560095B51B /* MainMenu.swift */,
 				1EB76EFD2028D5580051DFE6 /* GameScene.sks */,
 				1EB76EFF2028D5580051DFE6 /* Actions.sks */,
 				1EB76F012028D5580051DFE6 /* GameScene.swift */,
@@ -305,6 +308,7 @@
 				3145B8C820407FCC005D99EA /* Enemy.swift in Sources */,
 				3145B8C420405CF9005D99EA /* BackgroundManager.swift in Sources */,
 				1EB76F022028D5580051DFE6 /* GameScene.swift in Sources */,
+				1E53F289204417560095B51B /* MainMenu.swift in Sources */,
 				1EB76F042028D5580051DFE6 /* GameViewController.swift in Sources */,
 				3145B8BD20404982005D99EA /* AudioManager.swift in Sources */,
 				3145B8C620406C25005D99EA /* Player.swift in Sources */,

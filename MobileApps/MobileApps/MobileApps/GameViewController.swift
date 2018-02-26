@@ -15,7 +15,7 @@ class GameViewController: UIViewController {
         super.viewDidLoad()
         
         // Define scene
-        let scene1 = GameScene(size: self.view.bounds.size)
+        let scene1 = MainMenu(size: self.view.bounds.size)
         
         // Define the sprite kit view
         let skview = self.view as! SKView
