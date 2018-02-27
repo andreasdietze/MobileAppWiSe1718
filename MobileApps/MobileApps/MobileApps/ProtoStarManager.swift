@@ -11,13 +11,13 @@ import SpriteKit
 
 class ProtoStarManager {
     
-    // Enemy texture sheet
+    // ProtoStar texture sheet
     let protoStarTexture = SKTexture(imageNamed: "p_Sprite_0")
     
-    // Enemy object with sprite sheet
+    // ProtoStar object with sprite sheet
     var protoStarNode: SKSpriteNode = SKSpriteNode()
     
-    // Enemy sprite sheet scale
+    // ProtoStar sprite sheet scale
     let protoStarNodeScale: CGFloat = 0.5
     
     // Create proto star object
@@ -49,7 +49,7 @@ class ProtoStarManager {
             y: gameInstance.size.height + protoStarNode.size.height
         )
         
-        // Set enemy rotation (rotate 180 deg)
+        // Set proto star rotation (rotate 180 deg)
         protoStarNode.zRotation = CGFloat((CGFloat.pi / 180) * 180)
         
         // Set z-index
@@ -75,6 +75,9 @@ class ProtoStarManager {
         
         // ContactEvent with bullet and player
         protoStarNode.physicsBody?.contactTestBitMask =  physicsMaskPlayerBullet | physicsMaskPlayer
+        
+        // Set name
+        protoStarNode.name = "protoStar"
         
         // Add to scene
         gameInstance.addChild(protoStarNode)

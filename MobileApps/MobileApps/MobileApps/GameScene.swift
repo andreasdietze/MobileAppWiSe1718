@@ -15,6 +15,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var backgroundManager = BackgroundManager()
     var audioManager = AudioManager()
     var protoStarManager = ProtoStarManager()
+    var asteroidManager = AsteroidManager()
     var player = Player()
     var enemy = Enemy()
     var timerEnemy = Timer()
@@ -34,6 +35,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // ProtoStar
         let protoStarMask:      UInt32  = 0b100000  // binary 32
+        
+        // Asteroid
+        let asteroidMask:       UInt32  = 0b1000000 // binary 64
         
     }
     
@@ -58,9 +62,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Player
         player.initPlayer(
             gameInstance: self,
-            physicsMaskPlayer: physicsBodyMask.playerMask,  // PlayerCollisionMask
-            physicsMaskEnemy: physicsBodyMask.enemyMask,    // EnemyCollisionMask
-            physicalMaskEmpty: physicsBodyMask.emptyMask    // EmptyCollisionMask
+            physicsMaskPlayer: physicsBodyMask.playerMask,      // PlayerCollisionMask
+            physicsMaskEnemy: physicsBodyMask.enemyMask,        // EnemyCollisionMask
+            physicalMaskEmpty: physicsBodyMask.emptyMask,       // EmptyCollisionMask
+            physicsMaskAsteroid: physicsBodyMask.asteroidMask   // AsteroidCollisionMask
         )
         
         // Enemies
@@ -94,7 +99,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 
             )*/
             
-            strongSelf.protoStarManager.addProtoStar(
+            /*strongSelf.protoStarManager.addProtoStar(
                 gameInstance: strongSelf,
                 physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
                 physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
@@ -102,10 +107,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask,               // PlayerCollisionMask
                 physicsMaskProtoStar: strongSelf.physicsBodyMask.protoStarMask          // ProtoStarCollsionMask
                 
+            )*/
+            
+            strongSelf.asteroidManager.addAsteroid(
+                gameInstance: strongSelf,
+                physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
+                physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
+                physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
+                physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask,               // PlayerCollisionMask
+                physicsMaskAsteroid: strongSelf.physicsBodyMask.asteroidMask            // ProtoStarCollsionMask
             )
         }
     }
     
+    // Handle player bullet - enemy collision
     func getContactPlayerBulletWithEnemy(playerBulletNode: SKSpriteNode, enemyNode: SKSpriteNode){
         
         // Remove bullet
@@ -124,6 +139,33 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         enemyNode.removeFromParent()
     }
     
+    // Handle playerBullet - protoStar collision. Just remove the bullet, a proto star cannot be killed
+    func getContactPlayerBulletWithProtoStar(playerBulletNode: SKSpriteNode, protoStarNode: SKSpriteNode){
+        // If bodyA is the bullet, delte bodyA
+        if playerBulletNode.name == "bullet" {
+            playerBulletNode.removeFromParent()
+        }
+        
+        // if bodyB is the bullet, delete bodyB
+        if protoStarNode.name == "bullet" {
+            protoStarNode.removeFromParent()
+        }
+    }
+    
+    // Handle playerBullet - asteroid collision. Just remove the bullet, a asteroid cannot be killed
+    func getContactPlayerBulletWithAsteroid(playerBulletNode: SKSpriteNode, asteroidNode: SKSpriteNode) {
+        // If bodyA is the bullet, delte bodyA
+        if playerBulletNode.name == "bullet" {
+            playerBulletNode.removeFromParent()
+        }
+        
+        // if bodyB is the bullet, delete bodyB
+        if asteroidNode.name == "bullet" {
+            asteroidNode.removeFromParent()
+        }
+    }
+    
+    // Handle player - enemy collision
     func getContactPlayerWithEnemy(playerNode: SKSpriteNode, enemyNode: SKSpriteNode){
         // Trigger explosion sound
         audioManager.playExplosionOneSKAction(gameInstance: self)
@@ -170,19 +212,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         player.killPlayer(gameInstance: self, playerNode: playerNode)
         
         // TODO: End the game, go back to start menue
-    }
-    
-    // Just remove the bullet, a proto star cannot be killed
-    func getContactPlayerBulletWithProtoStar(playerBulletNode: SKSpriteNode, protoStarNode: SKSpriteNode){
-        // If bodyA is the bullet, delte bodyA
-        if playerBulletNode.name == "bullet" {
-            playerBulletNode.removeFromParent()
-        }
-        
-        // if bodyB is the bullet, delete bodyB
-        if protoStarNode.name == "bullet" {
-            protoStarNode.removeFromParent()
-        }
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
@@ -248,6 +277,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             getContactPlayerBulletWithProtoStar(
                 playerBulletNode: nodeB as! SKSpriteNode,   // Cast to SKSPriteNode
                 protoStarNode: nodeA as! SKSpriteNode           // Cast to SKSPriteNode
+            )
+            break
+            
+        // PlayerBullet collide with asteroid
+        case physicsBodyMask.playerBulletMask | physicsBodyMask.asteroidMask :
+            
+            // Check if nodes are available, catch otherwise
+            guard let nodeA = contact.bodyA.node else {
+                print("Node A not found")
+                return
+            }
+            
+            guard let nodeB = contact.bodyB.node else {
+                print("Node B not found")
+                return
+            }
+            
+            // Collision occur for sure
+            // print("Collision: PlayerBullet collide with Asteroid")
+            
+            // BodyA: protoStar with mask 64
+            print("Mask of A: " + String(contact.bodyA.categoryBitMask))
+            
+            // BodyB: playerBullet with mask 2
+            print("Mask of B: " + String(contact.bodyB.categoryBitMask))
+            
+            // Handle collision
+            getContactPlayerBulletWithAsteroid(
+                playerBulletNode: nodeB as! SKSpriteNode,   // Cast to SKSPriteNode
+                asteroidNode: nodeA as! SKSpriteNode        // Cast to SKSPriteNode
             )
             break
             
@@ -317,12 +376,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // Wird komischerweise nicht aufgerufen ???? --> Wird aufgerufen, wenn für elemente kein case erstellt wurde (was zur ...)
     func didEnd(_ contact: SKPhysicsContact) {
         
-        print("Contact finished")
+        // print("Contact finished")
         
         if contact.bodyA.node?.name == "bullet" || contact.bodyB.node?.name == "bullet"
         || contact.bodyA.node?.name == "ship"   || contact.bodyB.node?.name == "ship" {
             enemy.contactBegin = true
-             print("Contact finished")
+             //print("Contact finished")
             
         }
     }
@@ -359,7 +418,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Update background
         backgroundManager.updateBackground()
-        
+
+        // Player collision with viewport (half size of texture bonus).
+        // Player is not able to kill himself (mouse and touch) cause he never can reach
+        // a position less/greater than the viewport minimum/maximum size in any direction
+        // due to the anchor point is the center of the sprite.
+        if  player.playerNode.position.x < 0 ||
+            player.playerNode.position.y < 0 ||
+            player.playerNode.position.x > self.size.width {
+            // Kill player
+            player.killPlayer(gameInstance: self, playerNode: player.playerNode)
+        }
     }
     
     

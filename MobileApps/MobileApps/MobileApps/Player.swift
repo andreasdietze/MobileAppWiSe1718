@@ -31,7 +31,13 @@ class Player {
     var lifeCount: Int = 4
     
     // Start parameters for the player
-    func initPlayer(gameInstance: GameScene, physicsMaskPlayer: UInt32, physicsMaskEnemy: UInt32, physicalMaskEmpty: UInt32){
+    func initPlayer(
+            gameInstance: GameScene,
+            physicsMaskPlayer: UInt32,
+            physicsMaskEnemy: UInt32,
+            physicalMaskEmpty: UInt32,
+            physicsMaskAsteroid: UInt32
+        ){
         
         // Set state of the player
         playerNode = SKSpriteNode(texture: playerTexture) //(imageNamed: playerTexture)
@@ -60,13 +66,21 @@ class Player {
         // Collision: https://stackoverflow.com/questions/31109659/how-does-collisionbitmask-work-swift-spritekit
         // Gravity behavior: no gravity
         playerNode.physicsBody?.affectedByGravity = false
+        
+        // Is body dynamic ?
         //playerNode.physicsBody?.isDynamic = false
+        
+        // Friction affected body ?
+        //playerNode.physicsBody?.friction = 0
+        
+        // Do not change player direction on collision with asteroids
+        playerNode.physicsBody?.allowsRotation = false
 
         // Set physicsBitMask: defines the category to which this body belongs to
         playerNode.physicsBody?.categoryBitMask = physicsMaskPlayer
         
         // Set collisionBitMask: defines the categories that can collide with this body (disable to have no tranfsormation affects)
-        playerNode.physicsBody?.collisionBitMask = 0
+        playerNode.physicsBody?.collisionBitMask = physicsMaskAsteroid // 0
         
         // Set contanctBitMask: defines which bodies causes intersection notifications with this body
         playerNode.physicsBody?.contactTestBitMask = physicsMaskEnemy
@@ -82,7 +96,13 @@ class Player {
         
     }
     
-    func addBullet(gameInstance: GameScene, audioManagerInstance: AudioManager, physicsMaskPlayerBullet: UInt32, physicsMaskEnemy: UInt32, physicsMaskEmpty: UInt32) {
+    func addBullet(
+            gameInstance: GameScene,
+            audioManagerInstance: AudioManager,
+            physicsMaskPlayerBullet: UInt32,
+            physicsMaskEnemy: UInt32,
+            physicsMaskEmpty: UInt32
+        ) {
         
         // Initiate shot node
         bulletNode = SKSpriteNode(texture: bulletTexture)
