@@ -81,6 +81,9 @@ class AsteroidManager {
         // Gravity behavior: no gravity
         asteroidNode.physicsBody?.affectedByGravity = false
         
+        // Set mass
+        asteroidNode.physicsBody?.mass *= 4
+        
         // Set physicsBitMask
         asteroidNode.physicsBody?.categoryBitMask = physicsMaskAsteroid
         
