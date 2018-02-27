@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1E53F289204417560095B51B /* MainMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E53F288204417560095B51B /* MainMenu.swift */; };
+		1E8F79F12045565F0026E4C1 /* Retry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E8F79F02045565F0026E4C1 /* Retry.swift */; };
 		1EB76EFC2028D5580051DFE6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB76EFB2028D5580051DFE6 /* AppDelegate.swift */; };
 		1EB76EFE2028D5580051DFE6 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 1EB76EFD2028D5580051DFE6 /* GameScene.sks */; };
 		1EB76F002028D5580051DFE6 /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 1EB76EFF2028D5580051DFE6 /* Actions.sks */; };
@@ -48,6 +49,7 @@
 
 /* Begin PBXFileReference section */
 		1E53F288204417560095B51B /* MainMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainMenu.swift; sourceTree = "<group>"; };
+		1E8F79F02045565F0026E4C1 /* Retry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Retry.swift; sourceTree = "<group>"; };
 		1EB76EF82028D5580051DFE6 /* MobileApps.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MobileApps.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1EB76EFB2028D5580051DFE6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1EB76EFD2028D5580051DFE6 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 				3145B8C720407FCC005D99EA /* Enemy.swift */,
 				3105E71E2044BD1C0097DABA /* ProtoStarManager.swift */,
 				3105E7202044DB090097DABA /* AsteroidManager.swift */,
+				1E8F79F02045565F0026E4C1 /* Retry.swift */,
 			);
 			path = MobileApps;
 			sourceTree = "<group>";
@@ -315,6 +318,7 @@
 				3145B8C820407FCC005D99EA /* Enemy.swift in Sources */,
 				3105E71F2044BD1C0097DABA /* ProtoStarManager.swift in Sources */,
 				3145B8C420405CF9005D99EA /* BackgroundManager.swift in Sources */,
+				1E8F79F12045565F0026E4C1 /* Retry.swift in Sources */,
 				1EB76F022028D5580051DFE6 /* GameScene.swift in Sources */,
 				1E53F289204417560095B51B /* MainMenu.swift in Sources */,
 				1EB76F042028D5580051DFE6 /* GameViewController.swift in Sources */,

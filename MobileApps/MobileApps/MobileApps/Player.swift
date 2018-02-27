@@ -111,7 +111,7 @@ class Player {
         bulletNode.position = playerNode.position
         
         // Set z-index
-        bulletNode.zPosition = 1
+        bulletNode.zPosition = 0
         
         // Collider - Circle
         //bulletNode.physicsBody = SKPhysicsBody(circleOfRadius: bulletNode.size.width / 5)
@@ -182,7 +182,7 @@ class Player {
             lifeNode.setScale(0.75)
             
             // Z-Index: over all other objects
-            lifeNode.zPosition = 2
+            lifeNode.zPosition = 3
             
             // Add to scene
             gameInstance.addChild(lifeNode)
@@ -219,6 +219,6 @@ class Player {
         isPlayerAlive = false
         
         // Delete player node
-        playerNode.removeFromParent()
+        // playerNode.removeFromParent() //sieht schöner aus ohne den node zu deleten
     }
 }

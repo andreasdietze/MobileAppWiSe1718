@@ -18,7 +18,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var asteroidManager = AsteroidManager()
     var player = Player()
     var enemy = Enemy()
+    var stage = 0
+    var timerStage = Timer()
     var timerEnemy = Timer()
+    var highScoreLabel = SKLabelNode(fontNamed: "Arial")
+    var currentScoreLabel = SKLabelNode(fontNamed: "Arial")
+    var currentScore = 0
+    var highScore = UserDefaults.standard.integer(forKey: "HIGHSCORE")
     
     // Define collider masks
     struct PhysicsBodyMasks {
@@ -68,9 +74,25 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             physicsMaskAsteroid: physicsBodyMask.asteroidMask   // AsteroidCollisionMask
         )
         
+        
         // Enemies
         // https://stackoverflow.com/questions/40613556/timer-scheduledtimer-does-not-work-in-swift-3
-        timerEnemy = Timer.scheduledTimer(withTimeInterval: 2, repeats: true){
+        
+        timerStage = Timer.scheduledTimer(withTimeInterval: 8, repeats: true){
+            //"[weak self]" creates a "capture group" for timer
+            [weak self] timer in
+            
+            //Add a guard statement to bail out of the timer code
+            //if the object has been freed.
+            guard let strongSelf = self else {
+                return
+            }
+            
+            strongSelf.stage += 1
+            strongSelf.stage %= 3
+        }
+        
+        timerEnemy = Timer.scheduledTimer(withTimeInterval: 2.4, repeats: true){
             
             //"[weak self]" creates a "capture group" for timer
             [weak self] timer in
@@ -81,43 +103,66 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 return
             }
             
-            // Spawn enemies
-            /*strongSelf.enemy.addEnemy(
-                gameInstance: strongSelf,
-                physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
-                physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
-                physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
-                physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask                // PlayerCollisionMask
-            )
-            
-            strongSelf.enemy.addEnemySheet(
-                gameInstance: strongSelf,
-                physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
-                physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
-                physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
-                physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask                // PlayerCollisionMask
+            switch(strongSelf.stage){
+            case 0:
+                // Spawn enemies
+                strongSelf.enemy.addEnemy(
+                    gameInstance: strongSelf,
+                    physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
+                    physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
+                    physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
+                    physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask                // PlayerCollisionMask
+                )
                 
-            )*/
-            
-            /*strongSelf.protoStarManager.addProtoStar(
-                gameInstance: strongSelf,
-                physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
-                physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
-                physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
-                physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask,               // PlayerCollisionMask
-                physicsMaskProtoStar: strongSelf.physicsBodyMask.protoStarMask          // ProtoStarCollsionMask
-                
-            )*/
-            
-            strongSelf.asteroidManager.addAsteroid(
-                gameInstance: strongSelf,
-                physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
-                physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
-                physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
-                physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask,               // PlayerCollisionMask
-                physicsMaskAsteroid: strongSelf.physicsBodyMask.asteroidMask            // ProtoStarCollsionMask
-            )
+                strongSelf.enemy.addEnemySheet(
+                    gameInstance: strongSelf,
+                    physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
+                    physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
+                    physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
+                    physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask                // PlayerCollisionMask
+                    
+                )
+            case 1:
+                strongSelf.asteroidManager.addAsteroid(
+                 gameInstance: strongSelf,
+                 physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
+                 physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
+                 physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
+                 physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask,               // PlayerCollisionMask
+                 physicsMaskAsteroid: strongSelf.physicsBodyMask.asteroidMask            // ProtoStarCollsionMask
+                 )
+            case 2:
+                strongSelf.protoStarManager.addProtoStar(
+                 gameInstance: strongSelf,
+                 physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
+                 physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
+                 physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
+                 physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask,               // PlayerCollisionMask
+                 physicsMaskProtoStar: strongSelf.physicsBodyMask.protoStarMask          // ProtoStarCollsionMask
+                 
+                 )
+            default:
+                print("wrong case!")
+            }
         }
+        
+        // persistent Score
+        highScoreLabel.fontSize = 20
+        highScoreLabel.text = "Highscore: \(UserDefaults.standard.integer(forKey: "HIGHSCORE"))"
+        highScoreLabel.zPosition = 3
+        highScoreLabel.position = CGPoint(x: self.size.width - highScoreLabel.frame.size.width - 10, y: self.size.height - highScoreLabel.frame.size.height - 10)
+        self.addChild(highScoreLabel)
+        
+        currentScoreLabel.fontSize = 20
+        currentScoreLabel.text = "Score: \(currentScore)"
+        currentScoreLabel.zPosition = 3
+        currentScoreLabel.position = CGPoint(x: highScoreLabel.position.x, y: highScoreLabel.position.y - currentScoreLabel.frame.size.height - 10)
+        self.addChild(currentScoreLabel)
+    }
+    
+    func saveScore() {
+        UserDefaults.standard.set(currentScore, forKey: "HIGHSCORE")
+        highScoreLabel.text = "Highscore: \(UserDefaults.standard.integer(forKey: "HIGHSCORE"))"
     }
     
     // Handle player bullet - enemy collision
@@ -137,6 +182,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Remove enemy
         enemyNode.removeFromParent()
+        
+        currentScore += 1
+        currentScoreLabel.text = "Score: \(currentScore)"
     }
     
     // Handle playerBullet - protoStar collision. Just remove the bullet, a proto star cannot be killed
@@ -416,6 +464,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // Gameloop
     override func update(_ currentTime: TimeInterval) {
         
+        if !player.isPlayerAlive {
+            let transition = SKTransition.fade(withDuration: 2)
+            let retry = Retry(size: self.size)
+            self.view?.presentScene(retry, transition: transition)
+        }
         // Update background
         backgroundManager.updateBackground()
 
@@ -428,6 +481,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             player.playerNode.position.x > self.size.width {
             // Kill player
             player.killPlayer(gameInstance: self, playerNode: player.playerNode)
+        }
+        
+        if currentScore > UserDefaults.standard.integer(forKey: "HIGHSCORE") {
+            saveScore()
+            
         }
     }
     
