@@ -18,14 +18,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var asteroidManager = AsteroidManager()
     var player = Player()
     var enemy = Enemy()
-    var stage = 0
-    var timerStage = Timer()
-    var timerEnemy = Timer()
     var highScoreLabel = SKLabelNode(fontNamed: "Arial")
     var currentScoreLabel = SKLabelNode(fontNamed: "Arial")
     var currentScore = 0
     var highScore = UserDefaults.standard.integer(forKey: "HIGHSCORE")
-    
+    var totalGameTime: Int = 0
+
     // Define collider masks
     struct PhysicsBodyMasks {
         // Player objects
@@ -47,9 +45,70 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
     }
     
+    // Define game stages
+    struct Stages {
+        static let stageOne:    UInt8 = 0
+        static let stageTwo:    UInt8 = 1
+        static let stageThree:  UInt8 = 2
+        static let stageFour:   UInt8 = 3
+    }
+    
+    // Five seconds pause between a change of a stage
+    let switchToStageTwo: UInt32 = 33   // 2.5 * 10 + 2.5 + 5 rounded
+    let switchToStageThree: UInt32 = 30
+    let switchToStageFour: UInt32 = 45
+    var switchTrigger: Bool = true
+    
+    // Stage one parameters : 2.5 * 10 + 5 = 30 sec --> start time for stage two
+    var stageOneTrigger: Bool = true
+    let stageOneStartTime: UInt32 = 5
+    var timerStageOne = Timer()
+    let stageOneSpawnDuration: Double = 2.5
+    var enemyCountStageOne : Int = 0
+    let enemyMaxCountStageOne : Int = 10
+    
+    // Stage two parameters : 2.5 * 5 = 12.5 + 5 = 18 sec + 30 sec = 48 sec
+    var stageTwoTrigger: Bool = true
+    let stageTwoStartTime: UInt32 = 30
+    var timerStageTwo = Timer()
+    let stageTwoSpawnDuration: Double = 2.5
+    var enemyCountStageTwo : Int = 0
+    let enemyMaxCountStageTwo : Int = 5
+    
+    // Stage three parameters : 2 * 10 = 20 + 48 = 68
+    var stageThreeTrigger: Bool = true
+    let stageThreeStartTime: UInt32 = 48
+    var timerStageThree = Timer()
+    let stageThreeSpawnDuration: Double = 2.5
+    var enemyCountStageThree : Int = 0
+    let enemyMaxCountStageThree : Int = 10
+    
+    // Stage four parameters : run forever
+    var stageFourTrigger: Bool = true
+    let stageFourStartTime: UInt32 = 68
+    var timerStageFour = Timer()
+    var timerEnemyStageFour = Timer()
+    var stageFourHelper = 0
+    
     var physicsBodyMask = PhysicsBodyMasks()
     
+    func gameTimer(){
+        let wait: SKAction = SKAction.wait(forDuration: 1)
+        let finishTimer: SKAction = SKAction.run {
+            
+            self.totalGameTime += 1
+            
+            print(self.totalGameTime)
+            
+            self.gameTimer()
+        }
+        
+        let seq: SKAction = SKAction.sequence([wait, finishTimer])
+        self.run(seq)
+    }
+    
     override func didMove(to view: SKView) {
+        self.gameTimer()
         
         // Set physics behavior
         // default: self.physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
@@ -73,78 +132,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             physicalMaskEmpty: physicsBodyMask.emptyMask,       // EmptyCollisionMask
             physicsMaskAsteroid: physicsBodyMask.asteroidMask   // AsteroidCollisionMask
         )
-        
-        
-        // Enemies
-        // https://stackoverflow.com/questions/40613556/timer-scheduledtimer-does-not-work-in-swift-3
-        
-        timerStage = Timer.scheduledTimer(withTimeInterval: 8, repeats: true){
-            //"[weak self]" creates a "capture group" for timer
-            [weak self] timer in
-            
-            //Add a guard statement to bail out of the timer code
-            //if the object has been freed.
-            guard let strongSelf = self else {
-                return
-            }
-            
-            strongSelf.stage += 1
-            strongSelf.stage %= 3
-        }
-        
-        timerEnemy = Timer.scheduledTimer(withTimeInterval: 2.4, repeats: true){
-            
-            //"[weak self]" creates a "capture group" for timer
-            [weak self] timer in
-            
-            //Add a guard statement to bail out of the timer code
-            //if the object has been freed.
-            guard let strongSelf = self else {
-                return
-            }
-            
-            switch(strongSelf.stage){
-            case 0:
-                // Spawn enemies
-                strongSelf.enemy.addEnemy(
-                    gameInstance: strongSelf,
-                    physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
-                    physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
-                    physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
-                    physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask                // PlayerCollisionMask
-                )
-                
-                strongSelf.enemy.addEnemySheet(
-                    gameInstance: strongSelf,
-                    physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
-                    physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
-                    physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
-                    physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask                // PlayerCollisionMask
-                    
-                )
-            case 1:
-                strongSelf.asteroidManager.addAsteroid(
-                 gameInstance: strongSelf,
-                 physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
-                 physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
-                 physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
-                 physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask,               // PlayerCollisionMask
-                 physicsMaskAsteroid: strongSelf.physicsBodyMask.asteroidMask            // ProtoStarCollsionMask
-                 )
-            case 2:
-                strongSelf.protoStarManager.addProtoStar(
-                 gameInstance: strongSelf,
-                 physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
-                 physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
-                 physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
-                 physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask,               // PlayerCollisionMask
-                 physicsMaskProtoStar: strongSelf.physicsBodyMask.protoStarMask          // ProtoStarCollsionMask
-                 
-                 )
-            default:
-                print("wrong case!")
-            }
-        }
         
         // persistent Score
         highScoreLabel.fontSize = 20
@@ -282,13 +269,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             }
             
             // Collision occur for sure
-           // print("Collision: PlayerBullet collide with Enemy")
+            // print("Collision: PlayerBullet collide with Enemy")
             
             // BodyA: enemy with mask 4
-            print("Mask of A: " + String(contact.bodyA.categoryBitMask))
+            //print("Mask of A: " + String(contact.bodyA.categoryBitMask))
             
             // BodyB: playerBullet with mask 2
-            print("Mask of B: " + String(contact.bodyB.categoryBitMask))
+            //print("Mask of B: " + String(contact.bodyB.categoryBitMask))
 
             // Handle collision
             getContactPlayerBulletWithEnemy(
@@ -316,10 +303,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // print("Collision: PlayerBullet collide with ProtoStar")
             
             // BodyA: protoStar with mask 32
-            print("Mask of A: " + String(contact.bodyA.categoryBitMask))
+            // print("Mask of A: " + String(contact.bodyA.categoryBitMask))
             
             // BodyB: playerBullet with mask 2
-            print("Mask of B: " + String(contact.bodyB.categoryBitMask))
+            // print("Mask of B: " + String(contact.bodyB.categoryBitMask))
             
             // Handle collision
             getContactPlayerBulletWithProtoStar(
@@ -346,10 +333,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // print("Collision: PlayerBullet collide with Asteroid")
             
             // BodyA: protoStar with mask 64
-            print("Mask of A: " + String(contact.bodyA.categoryBitMask))
+            // print("Mask of A: " + String(contact.bodyA.categoryBitMask))
             
             // BodyB: playerBullet with mask 2
-            print("Mask of B: " + String(contact.bodyB.categoryBitMask))
+            // print("Mask of B: " + String(contact.bodyB.categoryBitMask))
             
             // Handle collision
             getContactPlayerBulletWithAsteroid(
@@ -375,10 +362,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //print("Collision: Player collide with Enemy")
             
             // BodyA: player with mask 1
-            print("Mask of A: " + String(contact.bodyA.categoryBitMask))
+            // print("Mask of A: " + String(contact.bodyA.categoryBitMask))
 
             // BodyB: enemy with mask 4
-            print("Mask of B: " + String(contact.bodyB.categoryBitMask))
+            // print("Mask of B: " + String(contact.bodyB.categoryBitMask))
             
             // Handle collision
             getContactPlayerWithEnemy(
@@ -404,10 +391,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //print("Collision: Player collide with ProtoStar")
             
             // BodyA: player with mask 1
-            print("Mask of A: " + String(contact.bodyA.categoryBitMask))
+            // print("Mask of A: " + String(contact.bodyA.categoryBitMask))
             
             // BodyB: enemy with mask 32
-            print("Mask of B: " + String(contact.bodyB.categoryBitMask))
+            // print("Mask of B: " + String(contact.bodyB.categoryBitMask))
             
             // Handle collision
             getContactPlayerWithProtoStar(
@@ -483,9 +470,246 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             player.killPlayer(gameInstance: self, playerNode: player.playerNode)
         }
         
+        // Score handling
         if currentScore > UserDefaults.standard.integer(forKey: "HIGHSCORE") {
             saveScore()
+        }
+        
+        // Spawn enemies for stage one (ships)
+        if totalGameTime > stageOneStartTime && stageOneTrigger {
+            //stageOne(repeats: true)
+            spawnTimerStageOne()
+            stageOneTrigger = false
+        }
+        
+        // Spawn enemies for stage two (stars)
+        if totalGameTime > stageTwoStartTime && stageTwoTrigger {
+            //stageTwo(repeats: true)
+            spawnTimerStageTwo()
+            stageTwoTrigger = false
+        }
+
+        // Spawn enemies for stage three (asteroids)
+        if totalGameTime > stageThreeStartTime && stageThreeTrigger {
+            //stageThree(repeats: true)
+            spawnTimerStageThree()
+            stageThreeTrigger = false
+        }
+        
+        
+        // Spawn enemies for stage four (mixed)
+        if totalGameTime > stageFourStartTime && stageFourTrigger {
+            stageFour(repeats: true)
+            stageFourTrigger = false
+        }
+    }
+    
+    func spawnTimerStageOne(){
+        
+        let wait: SKAction = SKAction.wait(forDuration: stageOneSpawnDuration)
+        let finishTimer: SKAction = SKAction.run {
+            self.enemyCountStageOne = self.enemyCountStageOne + 1
             
+            self.stageOne(repeats: false)
+            
+            if self.enemyCountStageOne < self.enemyMaxCountStageOne {
+                self.spawnTimerStageOne()
+            }
+        }
+        
+        let seq: SKAction = SKAction.sequence([wait, finishTimer])
+        self.run(seq)
+    }
+    
+    // Spawn enemies for 1. stage
+    func stageOne(repeats: Bool) {
+        
+        timerStageOne = Timer.scheduledTimer(withTimeInterval: 0, repeats: repeats){
+            
+            //"[weak self]" creates a "capture group" for timer
+            [weak self] timer in
+            
+            //Add a guard statement to bail out of the timer code
+            //if the object has been freed.
+            guard let strongSelf = self else {
+                return
+            }
+
+            // Spawn enemies
+            strongSelf.enemy.addEnemy(
+                gameInstance: strongSelf,
+                physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
+                physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
+                physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
+                physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask                // PlayerCollisionMask
+            )
+            
+            strongSelf.enemy.addEnemySheet(
+                gameInstance: strongSelf,
+                physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
+                physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
+                physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
+                physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask                // PlayerCollisionMask
+                
+            )
+        }
+    }
+
+    func spawnTimerStageTwo(){
+        
+        let wait: SKAction = SKAction.wait(forDuration: stageTwoSpawnDuration)
+        let finishTimer: SKAction = SKAction.run {
+            self.enemyCountStageTwo = self.enemyCountStageTwo + 1
+            
+            self.stageTwo(repeats: false)
+            
+            if self.enemyCountStageTwo < self.enemyMaxCountStageTwo {
+                self.spawnTimerStageTwo()
+            }
+        }
+        
+        let seq: SKAction = SKAction.sequence([wait, finishTimer])
+        self.run(seq)
+    }
+    
+    // Spawn enemies for 2. stage
+    func stageTwo(repeats: Bool) {
+        timerStageTwo = Timer.scheduledTimer(withTimeInterval: 0, repeats: repeats){
+            
+            //"[weak self]" creates a "capture group" for timer
+            [weak self] timer in
+            
+            //Add a guard statement to bail out of the timer code
+            //if the object has been freed.
+            guard let strongSelf = self else {
+                return
+            }
+            
+            // Spawn proto stars
+            strongSelf.protoStarManager.addProtoStar(
+            gameInstance: strongSelf,
+            physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
+            physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
+            physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
+            physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask,               // PlayerCollisionMask
+            physicsMaskProtoStar: strongSelf.physicsBodyMask.protoStarMask          // ProtoStarCollsionMask
+             
+            )
+        }
+    }
+    
+    func spawnTimerStageThree(){
+        
+        let wait: SKAction = SKAction.wait(forDuration: stageThreeSpawnDuration)
+        let finishTimer: SKAction = SKAction.run {
+            self.enemyCountStageThree = self.enemyCountStageThree + 1
+            
+            self.stageThree(repeats: false)
+            
+            if self.enemyCountStageThree < self.enemyMaxCountStageThree {
+                self.spawnTimerStageThree()
+            }
+        }
+        
+        let seq: SKAction = SKAction.sequence([wait, finishTimer])
+        self.run(seq)
+    }
+    
+    // Spawn enemies for 3. stage
+    func stageThree(repeats: Bool) {
+        timerStageThree = Timer.scheduledTimer(withTimeInterval: 2.4, repeats: repeats){
+            
+            //"[weak self]" creates a "capture group" for timer
+            [weak self] timer in
+            
+            //Add a guard statement to bail out of the timer code
+            //if the object has been freed.
+            guard let strongSelf = self else {
+                return
+            }
+            
+            // Spawn proto stars
+            strongSelf.asteroidManager.addAsteroid(
+                gameInstance: strongSelf,
+                physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
+                physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
+                physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
+                physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask,               // PlayerCollisionMask
+                physicsMaskAsteroid: strongSelf.physicsBodyMask.asteroidMask            // ProtoStarCollsionMask
+            )
+        }
+    }
+    
+    // Spawn enemies for 4. stage
+    func stageFour (repeats: Bool) {
+        // Enemies
+        // https://stackoverflow.com/questions/40613556/timer-scheduledtimer-does-not-work-in-swift-3
+        timerStageFour = Timer.scheduledTimer(withTimeInterval: 8, repeats: repeats){
+            //"[weak self]" creates a "capture group" for timer
+            [weak self] timer in
+            
+            //Add a guard statement to bail out of the timer code
+            //if the object has been freed.
+            guard let strongSelf = self else {
+                return
+            }
+            
+            strongSelf.stageFourHelper += 1
+            strongSelf.stageFourHelper %= 3
+        }
+        
+        timerEnemyStageFour = Timer.scheduledTimer(withTimeInterval: 2.4, repeats: true){
+            
+            //"[weak self]" creates a "capture group" for timer
+            [weak self] timer in
+            
+            //Add a guard statement to bail out of the timer code
+            //if the object has been freed.
+            guard let strongSelf = self else {
+                return
+            }
+            
+            switch(strongSelf.stageFourHelper){
+            case 0:
+                // Spawn enemies
+                strongSelf.enemy.addEnemy(
+                    gameInstance: strongSelf,
+                    physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
+                    physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
+                    physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
+                    physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask                // PlayerCollisionMask
+                )
+                
+                strongSelf.enemy.addEnemySheet(
+                    gameInstance: strongSelf,
+                    physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
+                    physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
+                    physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
+                    physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask                // PlayerCollisionMask
+                    
+                )
+            case 1:
+                strongSelf.asteroidManager.addAsteroid(
+                    gameInstance: strongSelf,
+                    physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
+                    physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
+                    physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
+                    physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask,               // PlayerCollisionMask
+                    physicsMaskAsteroid: strongSelf.physicsBodyMask.asteroidMask            // ProtoStarCollsionMask
+                )
+            case 2:
+                strongSelf.protoStarManager.addProtoStar(
+                    gameInstance: strongSelf,
+                    physicsMaskPlayerBullet: strongSelf.physicsBodyMask.playerBulletMask,   // PlayerBulletCollisionMask
+                    physicsMaskEnemy: strongSelf.physicsBodyMask.enemyMask,                 // EnemyCollisionMask
+                    physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
+                    physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask,               // PlayerCollisionMask
+                    physicsMaskProtoStar: strongSelf.physicsBodyMask.protoStarMask          // ProtoStarCollsionMask
+                    
+                )
+            default:
+                print("wrong case!")
+            }
         }
     }
     
