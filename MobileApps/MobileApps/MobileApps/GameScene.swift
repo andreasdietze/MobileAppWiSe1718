@@ -516,11 +516,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         // Player is not able to kill himself (mouse and touch) cause he never can reach
         // a position less/greater than the viewport minimum/maximum size in any direction
         // due to the anchor point is the center of the sprite.
-        if  player.playerNode.position.x < 0 ||
-            player.playerNode.position.y < 0 ||
-            player.playerNode.position.x > self.size.width {
+        if  player.playerNodeSheet.position.x < 0 ||
+            player.playerNodeSheet.position.y < 0 ||
+            player.playerNodeSheet.position.x > self.size.width {
             // Kill player
-            player.killPlayer(gameInstance: self, playerNode: player.playerNode)
+            player.killPlayer(gameInstance: self, playerNode: player.playerNodeSheet)
         }
         
         // Score handling
