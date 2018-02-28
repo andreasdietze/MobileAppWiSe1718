@@ -14,6 +14,12 @@ class Player {
     // Player texture
     let playerTexture = SKTexture(imageNamed: "ship") //"ship"
     
+    // Player texture sheet
+    let playerTextureSheet = SKTexture(imageNamed: "10")
+    
+    // Player object with sprite sheet
+    var playerNodeSheet: SKSpriteNode = SKSpriteNode()
+    
     var isPlayerAlive: Bool = true
     
     // Player object --> With ! u know the var now has no state but will have one before its first call.
@@ -38,6 +44,56 @@ class Player {
             physicalMaskEmpty: UInt32,
             physicsMaskAsteroid: UInt32
         ){
+        
+        // TextureSheet-Array
+        var playerArray = [SKTexture]()
+        
+        // Append textures to array
+        for index in 1...8 {
+            playerArray.append(SKTexture(imageNamed: "\(index)0"))
+        }
+        
+        // Set root texture
+        playerNodeSheet = SKSpriteNode(texture: playerTextureSheet)
+        
+        // Set Scale
+        playerNodeSheet.setScale(0.25)
+        
+        playerNodeSheet.position = CGPoint(x: gameInstance.size.width / 2, y: gameInstance.size.height / 2 - 200)
+        
+        // Set z-index
+        playerNodeSheet.zPosition = 1
+        
+        // Collider - Shape
+        playerNodeSheet.physicsBody = SKPhysicsBody(
+            texture: playerTextureSheet,
+            size: CGSize(
+                width: playerTextureSheet.size().width * 0.25,
+                height: playerTextureSheet.size().height * 0.25
+            )
+        )
+        
+        // Gravity behavior: no gravity
+        playerNodeSheet.physicsBody?.affectedByGravity = false
+        
+        // Do not change player direction on collision with asteroids
+        playerNodeSheet.physicsBody?.allowsRotation = false
+        
+        // Set physicsBitMask: defines the category to which this body belongs to
+        playerNodeSheet.physicsBody?.categoryBitMask = physicsMaskPlayer
+        
+        // Set collisionBitMask: defines the categories that can collide with this body (disable to have no tranfsormation affects)
+        playerNodeSheet.physicsBody?.collisionBitMask = physicsMaskAsteroid // 0
+        
+        // Set contanctBitMask: defines which bodies causes intersection notifications with this body
+        playerNodeSheet.physicsBody?.contactTestBitMask = physicsMaskEnemy
+        
+        // Add to scene
+        gameInstance.addChild(playerNodeSheet)
+        
+        // Action - SpriteSheet
+        playerNodeSheet.run(SKAction.repeatForever(SKAction.animate(with: playerArray, timePerFrame: 0.1)))
+        
         
         // Set state of the player
         playerNode = SKSpriteNode(texture: playerTexture) //(imageNamed: playerTexture)
@@ -87,9 +143,10 @@ class Player {
         
         // Set player name
         playerNode.name = "ship"
+        playerNodeSheet.name = "ship"
         
         // Add to scene
-        gameInstance.addChild(playerNode)
+        //gameInstance.addChild(playerNode)
         
         // Init player life
         setPlayerLifeCount(lifeCount: lifeCount, gameInstance: gameInstance)
@@ -108,7 +165,7 @@ class Player {
         bulletNode = SKSpriteNode(texture: bulletTexture)
         
         // Set position relative to player
-        bulletNode.position = playerNode.position
+        bulletNode.position = playerNodeSheet.position
         
         // Set z-index
         bulletNode.zPosition = 0

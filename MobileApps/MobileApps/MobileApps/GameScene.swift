@@ -475,7 +475,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         for touch in touches {
-            player.playerNode.position.x = touch.location(in: self).x
+            //player.playerNode.position.x = touch.location(in: self).x
+            player.playerNodeSheet.position.x = touch.location(in: self).x
         }
         
     }
@@ -485,7 +486,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         for touch in touches {
             let locationUser = touch.location(in: self)
             
-            if atPoint(locationUser) == player.playerNode {
+            if atPoint(locationUser) == player.playerNodeSheet {
                 // Add player shots
                 player.addBullet(
                     gameInstance: self,                                         // Game instance
