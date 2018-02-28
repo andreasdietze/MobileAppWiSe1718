@@ -198,7 +198,7 @@ class Enemy {
         enemyExplosionNode.run(SKAction.repeatForever(SKAction.animate(with: explosionArray, timePerFrame: 0.1)))
         
         // Remove node when explosion animation has expired
-        gameInstance.run(SKAction.wait(forDuration: 1.6)) {
+        gameInstance.run(SKAction.wait(forDuration: 1.7)) {
             self.enemyExplosionNode.removeFromParent()
             self.contactBegin = true
         }

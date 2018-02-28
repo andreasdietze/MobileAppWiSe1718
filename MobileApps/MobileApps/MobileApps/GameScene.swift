@@ -7,6 +7,7 @@
 //
 
 import SpriteKit
+import CoreMotion
 //import AVFoundation
 
 class GameScene: SKScene, SKPhysicsContactDelegate {
@@ -24,6 +25,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var currentScore = 0
     var highScore = UserDefaults.standard.integer(forKey: "HIGHSCORE")
     var totalGameTime: Int = 0
+    var motionManager = CMMotionManager()
+    
+    var gyroLevel = CGFloat(0)
 
     // Define collider masks
     struct PhysicsBodyMasks {
@@ -105,7 +109,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             self.totalGameTime += 1
             
-            print(self.totalGameTime)
+            //print(self.totalGameTime)
             
             self.gameTimer()
         }
@@ -114,8 +118,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         self.run(seq)
     }
 
-    
+    //var gyroData: CMGyroData? { get }
     override func didMove(to view: SKView) {
+        
+        // Set update interval for gyro sensor
+        motionManager.gyroUpdateInterval = 0.2
+        
+        // Triger sequential update (read data in func update)
+        motionManager.startGyroUpdates()
+
+        
+        // GameTime in seconds
         self.gameTimer()
         
         // Set physics behavior
@@ -561,6 +574,22 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if totalGameTime % 4 == 0 {
             health.contactBegin = true
         }
+        
+        // If gyro-x is less than 0
+        gyroLevel = CGFloat((motionManager.gyroData?.rotationRate.x)!) * 4
+        if gyroLevel <= 0 {
+            gyroLevel = 0 // set gyro value to 0
+        }
+        
+        // Add only positive gyro-x values
+        player.playerNodeSheet.position.y += gyroLevel
+        
+        // The boarder the player can boost to with gyro-x
+        if player.playerNodeSheet.position.y >= self.size.height / 4 {
+            player.playerNodeSheet.position.y = self.size.height / 4
+        }
+        
+        
     }
     
     func spawnHealthTimer(){
