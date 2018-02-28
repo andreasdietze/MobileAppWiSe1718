@@ -30,6 +30,7 @@
 		3145B8C620406C25005D99EA /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3145B8C520406C25005D99EA /* Player.swift */; };
 		3145B8C820407FCC005D99EA /* Enemy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3145B8C720407FCC005D99EA /* Enemy.swift */; };
 		315FA440204376EF00B10F2A /* explosion.wav in Resources */ = {isa = PBXBuildFile; fileRef = 315FA43F204376EF00B10F2A /* explosion.wav */; };
+		31FE039F2047359E00CFD33B /* GhostManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FE039E2047359E00CFD33B /* GhostManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +80,7 @@
 		3145B8C520406C25005D99EA /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		3145B8C720407FCC005D99EA /* Enemy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enemy.swift; sourceTree = "<group>"; };
 		315FA43F204376EF00B10F2A /* explosion.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = explosion.wav; sourceTree = "<group>"; };
+		31FE039E2047359E00CFD33B /* GhostManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GhostManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,6 +150,7 @@
 				3105E7202044DB090097DABA /* AsteroidManager.swift */,
 				1E8F79F02045565F0026E4C1 /* Retry.swift */,
 				1EE1B8F120462CCA001E7CC1 /* Health.swift */,
+				31FE039E2047359E00CFD33B /* GhostManager.swift */,
 			);
 			path = MobileApps;
 			sourceTree = "<group>";
@@ -322,6 +325,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3105E7212044DB090097DABA /* AsteroidManager.swift in Sources */,
+				31FE039F2047359E00CFD33B /* GhostManager.swift in Sources */,
 				1EE1B8F220462CCA001E7CC1 /* Health.swift in Sources */,
 				3145B8C820407FCC005D99EA /* Enemy.swift in Sources */,
 				3105E71F2044BD1C0097DABA /* ProtoStarManager.swift in Sources */,
@@ -501,12 +505,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B3WS8C59Y2;
 				INFOPLIST_FILE = MobileApps/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Elsen.MobileApps;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -517,12 +521,12 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = B3WS8C59Y2;
 				INFOPLIST_FILE = MobileApps/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Elsen.MobileApps;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = 2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

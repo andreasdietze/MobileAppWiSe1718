@@ -20,6 +20,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var player = Player()
     var enemy = Enemy()
     var health = Health()
+    //var ghostManager = GhostManager()
     var highScoreLabel = SKLabelNode(fontNamed: "Arial")
     var currentScoreLabel = SKLabelNode(fontNamed: "Arial")
     var currentScore = 0
@@ -49,7 +50,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let asteroidMask:       UInt32  = 0b1000000 // binary 64
         
         // Health
-        let healthMask:         UInt32 = 128
+        let healthMask:         UInt32 = 0b10000000 // binary 128
+        
+        // Ghost
+        let ghostMask:          UInt32 = 0b10000001 // binary 129
         
     }
     
@@ -109,7 +113,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             self.totalGameTime += 1
             
-            //print(self.totalGameTime)
+            print(self.totalGameTime)
             
             self.gameTimer()
         }
@@ -472,14 +476,31 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     // Wird komischerweise nicht aufgerufen ???? --> Wird aufgerufen, wenn für elemente kein case erstellt wurde (was zur ...)
     func didEnd(_ contact: SKPhysicsContact) {
         
-        // print("Contact finished")
-        
-        if contact.bodyA.node?.name == "bullet" || contact.bodyB.node?.name == "bullet"
-        || contact.bodyA.node?.name == "ship"   || contact.bodyB.node?.name == "ship" {
+         //print("Contact finished")
+        print(contact.bodyA.node?.name as Any)
+        if contact.bodyA.node?.name == "blueGhost" { //|| contact.bodyB.node?.name == "ghost" {
             enemy.contactBegin = true
-             //print("Contact finished")
+            //ghostManager.contactBegin = true
+            
+            print("Contact finished A")
+            
+            // Remove the ghost in case bodyA
+            contact.bodyA.node?.removeFromParent()
             
         }
+        
+        if contact.bodyB.node?.name == "blueGhost" {
+            enemy.contactBegin = true
+            //ghostManager.contactBegin = true
+            
+            print("Contact finished B")
+            
+            // Remove the ghost in case bodyB
+            contact.bodyB.node?.removeFromParent()
+            
+        }
+        
+        
         //if contact.bodyA.node?.name == "health" || contact.bodyB.node?.name == "health" {
         //    health.contactBegin = true
         //}
@@ -575,21 +596,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             health.contactBegin = true
         }
         
-        // If gyro-x is less than 0
-        gyroLevel = CGFloat((motionManager.gyroData?.rotationRate.x)!) * 4
-        if gyroLevel <= 0 {
-            gyroLevel = 0 // set gyro value to 0
+        // Check out gryo availability (performance bootleneck for vm)
+        if motionManager.gyroData?.rotationRate.x != nil {
+            
+            // If we got one, get the rotation value from x-axis (for strong reaction increase multyplier)
+            gyroLevel = CGFloat((motionManager.gyroData?.rotationRate.x)!) * 4
+            
+            // Ignore gyro-x values less than 0
+            if gyroLevel <= 0 {
+                gyroLevel = 0
+            }
+            
+            // Add only positive gyro-x values (we only can fly towards if
+            // we were pushed back by any asteroid)
+            player.playerNodeSheet.position.y += gyroLevel
+            
+            // The boarder, the player can boost to win accleartion with gyro-x (1/4 horizontal viewport)
+            if player.playerNodeSheet.position.y >= self.size.height / 4 {
+                player.playerNodeSheet.position.y = self.size.height / 4
+            }
         }
-        
-        // Add only positive gyro-x values
-        player.playerNodeSheet.position.y += gyroLevel
-        
-        // The boarder the player can boost to with gyro-x
-        if player.playerNodeSheet.position.y >= self.size.height / 4 {
-            player.playerNodeSheet.position.y = self.size.height / 4
-        }
-        
-        
     }
     
     func spawnHealthTimer(){
@@ -666,6 +692,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask,                 // EmptyCollisionMask
                 physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask                // PlayerCollisionMask
             )
+            
+            // Add ghost
+            //strongSelf.ghostManager.addGhost(gameInstance: strongSelf, enemy: strongSelf.enemy)
             
             strongSelf.enemy.addEnemySheet(
                 gameInstance: strongSelf,

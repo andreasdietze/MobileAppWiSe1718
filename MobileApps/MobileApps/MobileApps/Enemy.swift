@@ -170,7 +170,7 @@ class Enemy {
         
     }
     
-    func addEnemyExplosionSheet(gameInstance: GameScene, enemyPosition: CGPoint){
+   func addEnemyExplosionSheet(gameInstance: GameScene, enemyPosition: CGPoint){
         // TextureSheet-Array
         var explosionArray = [SKTexture]()
         
@@ -198,13 +198,9 @@ class Enemy {
         enemyExplosionNode.run(SKAction.repeatForever(SKAction.animate(with: explosionArray, timePerFrame: 0.1)))
         
         // Remove node when explosion animation has expired
-        gameInstance.run(SKAction.wait(forDuration: 1.7)) {
+        gameInstance.run(SKAction.wait(forDuration: 1.6)) {
             self.enemyExplosionNode.removeFromParent()
             self.contactBegin = true
-        }
-        
-        gameInstance.run(SKAction.wait(forDuration: 0.1)) {
-            //self.contactBegin = true
         }
     }
 }
