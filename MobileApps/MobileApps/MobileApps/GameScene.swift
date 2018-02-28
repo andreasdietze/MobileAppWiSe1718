@@ -18,6 +18,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var asteroidManager = AsteroidManager()
     var player = Player()
     var enemy = Enemy()
+    var health = Health()
     var highScoreLabel = SKLabelNode(fontNamed: "Arial")
     var currentScoreLabel = SKLabelNode(fontNamed: "Arial")
     var currentScore = 0
@@ -42,6 +43,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         // Asteroid
         let asteroidMask:       UInt32  = 0b1000000 // binary 64
+        
+        // Health
+        let healthMask:         UInt32 = 128
         
     }
     
@@ -90,6 +94,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     var timerEnemyStageFour = Timer()
     var stageFourHelper = 0
     
+    // health timer
+    var healthTimer = Timer()
+    
     var physicsBodyMask = PhysicsBodyMasks()
     
     func gameTimer(){
@@ -106,6 +113,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let seq: SKAction = SKAction.sequence([wait, finishTimer])
         self.run(seq)
     }
+
     
     override func didMove(to view: SKView) {
         self.gameTimer()
@@ -145,11 +153,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         currentScoreLabel.zPosition = 3
         currentScoreLabel.position = CGPoint(x: highScoreLabel.position.x, y: highScoreLabel.position.y - currentScoreLabel.frame.size.height - 10)
         self.addChild(currentScoreLabel)
+        
+        spawnHealthTimer()
     }
     
     func saveScore() {
         UserDefaults.standard.set(currentScore, forKey: "HIGHSCORE")
         highScoreLabel.text = "Highscore: \(UserDefaults.standard.integer(forKey: "HIGHSCORE"))"
+    }
+    
+    func saveLastScore() {
+        UserDefaults.standard.set(currentScore, forKey: "LASTSCORE")
     }
     
     // Handle player bullet - enemy collision
@@ -198,6 +212,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if asteroidNode.name == "bullet" {
             asteroidNode.removeFromParent()
         }
+    }
+    
+    //Handle player - health collision
+    func getContactPlayerWithHealth(playerNode: SKSpriteNode, healthNode: SKSpriteNode) {
+        // audio
+        audioManager.playHealthSound()
+        
+        // Trigger 1 up
+        if health.contactBegin {
+            player.increaseLifeCount(gameInstance: self)
+            health.contactBegin = false
+        }
+        
+        healthNode.removeFromParent()
     }
     
     // Handle player - enemy collision
@@ -373,6 +401,26 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 enemyNode: nodeB as! SKSpriteNode   // Cast to SKSPriteNode
             )
             break
+        // Player collide with health
+        case physicsBodyMask.playerMask | physicsBodyMask.healthMask :
+            
+            // Check if nodes are available, catch otherwise
+            guard let nodeA = contact.bodyA.node else {
+                print("Node A not found")
+                return
+            }
+            
+            guard let nodeB = contact.bodyB.node else {
+                print("Node B not found")
+                return
+            }
+            
+            // Handle collision
+            getContactPlayerWithHealth(playerNode: nodeA as! SKSpriteNode,
+                                       healthNode: nodeB as! SKSpriteNode
+            )
+            
+            break
             
         // Player collide with enemy
         case physicsBodyMask.playerMask | physicsBodyMask.protoStarMask :
@@ -419,6 +467,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
              //print("Contact finished")
             
         }
+        //if contact.bodyA.node?.name == "health" || contact.bodyB.node?.name == "health" {
+        //    health.contactBegin = true
+        //}
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -452,8 +503,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     override func update(_ currentTime: TimeInterval) {
         
         if !player.isPlayerAlive {
-            let transition = SKTransition.fade(withDuration: 2)
+            let transition = SKTransition.fade(withDuration: 4)
             let retry = Retry(size: self.size)
+            audioManager.stopBackgroundMusic()
             self.view?.presentScene(retry, transition: transition)
         }
         // Update background
@@ -474,6 +526,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if currentScore > UserDefaults.standard.integer(forKey: "HIGHSCORE") {
             saveScore()
         }
+        saveLastScore()
         
         // Spawn enemies for stage one (ships)
         if totalGameTime > stageOneStartTime && stageOneTrigger {
@@ -501,6 +554,46 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         if totalGameTime > stageFourStartTime && stageFourTrigger {
             stageFour(repeats: true)
             stageFourTrigger = false
+        }
+        
+        // hässlicher, aber effektiver workaround für life.increase-dosierungs-problem bei kollision mit health
+        if totalGameTime % 4 == 0 {
+            health.contactBegin = true
+        }
+    }
+    
+    func spawnHealthTimer(){
+        
+        let wait: SKAction = SKAction.wait(forDuration: 24)
+        let finishTimer: SKAction = SKAction.run {
+            
+            self.spawnHealth()
+        }
+        
+        let seq: SKAction = SKAction.sequence([wait, finishTimer])
+        self.run(seq)
+        
+    }
+    
+    func spawnHealth(){
+        healthTimer = Timer.scheduledTimer(withTimeInterval: 16, repeats: true){
+            
+            //"[weak self]" creates a "capture group" for timer
+            [weak self] timer in
+            
+            //Add a guard statement to bail out of the timer code
+            //if the object has been freed.
+            guard let strongSelf = self else {
+                return
+            }
+            
+            // spawn health
+            
+            strongSelf.health.addHealth(gameInstance: strongSelf,
+                                        physicsMaskHealth: strongSelf.physicsBodyMask.healthMask,
+                                        physicsMaskPlayer: strongSelf.physicsBodyMask.playerMask,
+                                        physicsMaskEmpty: strongSelf.physicsBodyMask.emptyMask
+            )
         }
     }
     

@@ -103,12 +103,19 @@ class AsteroidManager {
         let lower : UInt32 = 5
         let upper : UInt32 = 20
         let duration : UInt32 = arc4random_uniform(upper - lower) + lower // 5 - 20
+        let duration2 : UInt32 = arc4random_uniform(8 - 1) + 1 // 1 - 8
         let moveDown = SKAction.moveTo(y: -asteroidNode.size.height, duration: TimeInterval(duration))
+        let byAngle : CGFloat = CGFloat(Float(arc4random_uniform(6 + 1 + 6)) - 6) // -6 - 6 (radial)
+        
+        let rotate = SKAction.rotate(byAngle: CGFloat(byAngle), duration: TimeInterval(duration2))
+        
+        let repeatRotation:SKAction = SKAction.repeatForever(rotate)
         
         // Action - delete
         let delete = SKAction.removeFromParent()
         
         // Action - sequence
+        asteroidNode.run(repeatRotation)
         asteroidNode.run(SKAction.sequence([moveDown, delete]))
         
     }

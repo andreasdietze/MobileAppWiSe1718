@@ -165,6 +165,7 @@ class Player {
     
     // Set player life cound
     func setPlayerLifeCount(lifeCount: Int, gameInstance: GameScene){
+        
         // For every spriteNode
         for index in 0...lifeCount - 1 {
             // Define the node
@@ -186,6 +187,21 @@ class Player {
             
             // Add to scene
             gameInstance.addChild(lifeNode)
+        }
+    }
+    
+    // Increase player life count by one
+    public func increaseLifeCount(gameInstance: GameScene){
+        if lifeCount < 4 {
+            let lifeNode = SKSpriteNode(imageNamed: "live")
+            lifeNode.name = "live" + String(lifeCount)
+            lifeNode.anchorPoint = CGPoint(x: 0, y: 0)
+            lifeNode.position.x = CGFloat(lifeCount) * lifeNode.size.width
+            lifeNode.position.y = gameInstance.size.height - lifeNode.size.height
+            lifeNode.setScale(0.75)
+            lifeNode.zPosition = 3
+            gameInstance.addChild(lifeNode)
+            lifeCount += 1
         }
     }
     
@@ -221,4 +237,6 @@ class Player {
         // Delete player node
         // playerNode.removeFromParent() //sieht schöner aus ohne den node zu deleten
     }
+    
+    
 }

@@ -14,6 +14,12 @@ class AudioManager {
     // Init stuff and declare vars
     var backgroundAudioPlayer = AVAudioPlayer()
     var playerShotAudioPlayer = AVAudioPlayer()
+    var healthAudioPlayer = AVAudioPlayer()
+    
+    // Health
+    var healthAudio: URL?
+    let healthAudioSource = "1up"
+    let healthAudioSourceExtension = "mp3"
     
     // Background track
     var backgroundAudio: URL?
@@ -34,6 +40,7 @@ class AudioManager {
         // Set resource identifier and file extension
         backgroundAudio = Bundle.main.url(forResource: backgroundAudioSource, withExtension: backgroundAudioSourceExtension)
         playerLaserShotAudio = Bundle.main.url(forResource: playerLaserShotAudioSource, withExtension: playerLaserShotAudioSourceExtension)
+        healthAudio = Bundle.main.url(forResource: healthAudioSource, withExtension: healthAudioSourceExtension)
         
         // Load background track
         do {
@@ -49,6 +56,18 @@ class AudioManager {
             print("File not found: " + playerLaserShotAudioSource + "." + playerLaserShotAudioSourceExtension)
         }
         
+        // Load player health sound
+        do {
+            healthAudioPlayer = try AVAudioPlayer(contentsOf: healthAudio!)
+        } catch {
+            print("File not found: " + healthAudioSource + "." + healthAudioSourceExtension)
+        }
+    }
+    
+    func playHealthSound(){
+        healthAudioPlayer.numberOfLoops = 0
+        healthAudioPlayer.prepareToPlay()
+        healthAudioPlayer.play()
     }
     
     func playBackgroundMusic(){
@@ -75,6 +94,8 @@ class AudioManager {
         gameInstance.run(SKAction.playSoundFileNamed(explosionOneAudioSource, waitForCompletion: true))
     }
     
-
+    func stopBackgroundMusic(){
+        backgroundAudioPlayer.stop()
+    }
 
 }

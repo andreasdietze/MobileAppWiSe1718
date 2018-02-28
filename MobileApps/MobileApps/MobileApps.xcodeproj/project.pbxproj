@@ -19,6 +19,8 @@
 		1EB76F0C2028D5580051DFE6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1EB76F0A2028D5580051DFE6 /* LaunchScreen.storyboard */; };
 		1EB76F172028D5580051DFE6 /* MobileAppsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB76F162028D5580051DFE6 /* MobileAppsTests.swift */; };
 		1EB76F222028D5580051DFE6 /* MobileAppsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EB76F212028D5580051DFE6 /* MobileAppsUITests.swift */; };
+		1EE1B8F220462CCA001E7CC1 /* Health.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE1B8F120462CCA001E7CC1 /* Health.swift */; };
+		1EE1B8F420466F7C001E7CC1 /* 1up.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1EE1B8F320466F7C001E7CC1 /* 1up.mp3 */; };
 		3105E71F2044BD1C0097DABA /* ProtoStarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105E71E2044BD1C0097DABA /* ProtoStarManager.swift */; };
 		3105E7212044DB090097DABA /* AsteroidManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3105E7202044DB090097DABA /* AsteroidManager.swift */; };
 		3145B8BD20404982005D99EA /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3145B8BC20404982005D99EA /* AudioManager.swift */; };
@@ -66,6 +68,8 @@
 		1EB76F1D2028D5580051DFE6 /* MobileAppsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MobileAppsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1EB76F212028D5580051DFE6 /* MobileAppsUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileAppsUITests.swift; sourceTree = "<group>"; };
 		1EB76F232028D5580051DFE6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1EE1B8F120462CCA001E7CC1 /* Health.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Health.swift; sourceTree = "<group>"; };
+		1EE1B8F320466F7C001E7CC1 /* 1up.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = 1up.mp3; path = ../../../../../../1up.mp3; sourceTree = "<group>"; };
 		3105E71E2044BD1C0097DABA /* ProtoStarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtoStarManager.swift; sourceTree = "<group>"; };
 		3105E7202044DB090097DABA /* AsteroidManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsteroidManager.swift; sourceTree = "<group>"; };
 		3145B8BC20404982005D99EA /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
@@ -143,6 +147,7 @@
 				3105E71E2044BD1C0097DABA /* ProtoStarManager.swift */,
 				3105E7202044DB090097DABA /* AsteroidManager.swift */,
 				1E8F79F02045565F0026E4C1 /* Retry.swift */,
+				1EE1B8F120462CCA001E7CC1 /* Health.swift */,
 			);
 			path = MobileApps;
 			sourceTree = "<group>";
@@ -168,6 +173,7 @@
 		3145B8BE20404B93005D99EA /* Sound */ = {
 			isa = PBXGroup;
 			children = (
+				1EE1B8F320466F7C001E7CC1 /* 1up.mp3 */,
 				315FA43F204376EF00B10F2A /* explosion.wav */,
 				3145B8BF20404BEA005D99EA /* LaserShot.wav */,
 				3145B8C020404BEA005D99EA /* Steamtech-Mayhem.mp3 */,
@@ -285,6 +291,7 @@
 				3145B8C120404BEA005D99EA /* LaserShot.wav in Resources */,
 				1EB76F072028D5580051DFE6 /* Main.storyboard in Resources */,
 				315FA440204376EF00B10F2A /* explosion.wav in Resources */,
+				1EE1B8F420466F7C001E7CC1 /* 1up.mp3 in Resources */,
 				1EB76EFE2028D5580051DFE6 /* GameScene.sks in Resources */,
 				3145B8C220404BEA005D99EA /* Steamtech-Mayhem.mp3 in Resources */,
 				1EB76F092028D5580051DFE6 /* Assets.xcassets in Resources */,
@@ -315,6 +322,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3105E7212044DB090097DABA /* AsteroidManager.swift in Sources */,
+				1EE1B8F220462CCA001E7CC1 /* Health.swift in Sources */,
 				3145B8C820407FCC005D99EA /* Enemy.swift in Sources */,
 				3105E71F2044BD1C0097DABA /* ProtoStarManager.swift in Sources */,
 				3145B8C420405CF9005D99EA /* BackgroundManager.swift in Sources */,
